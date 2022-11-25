@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "u-blog-frontend",
+	"webDir": "dist",
+	"bundledWebRuntime": false
+}

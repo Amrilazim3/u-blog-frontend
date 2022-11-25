@@ -1,0 +1,7 @@
+{
+  "name": "u-blog-frontend",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
