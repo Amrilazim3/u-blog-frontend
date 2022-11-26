@@ -1,15 +1,13 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
-
-import { createPinia } from 'pinia';
-
-const pinia = createPinia();
-
 import { IonicVue } from "@ionic/vue";
-
+import { createPinia } from 'pinia';
 import axios from "axios";
 import VueAxios from "vue-axios";
+import { plugin, defaultConfig } from "@formkit/vue";
+
+const pinia = createPinia();
 
 const axiosInstance = axios.create({
 	baseURL: 'https://u-blog-backend.com/'
@@ -34,11 +32,15 @@ import "@ionic/vue/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 
+/* formkit themes */
+import '@formkit/themes/genesis'
+
 const app = createApp(App)
 	.use(IonicVue)
 	.use(router)
 	.use(VueAxios, axiosInstance)
-	.use(pinia);
+	.use(pinia)
+	.use(plugin, defaultConfig);
 
 router.isReady().then(() => {
 	app.mount("#app");
