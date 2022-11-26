@@ -16,6 +16,8 @@
 		"@capacitor/haptics": "4.1.0",
 		"@capacitor/keyboard": "4.1.0",
 		"@capacitor/status-bar": "4.1.0",
+		"@formkit/themes": "^1.0.0-beta.12",
+		"@formkit/vue": "^1.0.0-beta.12",
 		"@ionic/vue": "^6.0.0",
 		"@ionic/vue-router": "^6.0.0",
 		"axios": "^1.2.0",
