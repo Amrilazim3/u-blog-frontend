@@ -9,22 +9,12 @@
 		<ion-content :fullscreen="true">
 			<ion-header collapse="condense">
 				<ion-toolbar>
-					<ion-title size="large">Blank</ion-title>
+					<ion-title size="large">Welcome back, please login</ion-title>
 				</ion-toolbar>
 			</ion-header>
 
 			<div id="container">
-				<strong
-					>Welcome to U-Blog App</strong
-				>
-				<p>
-					Start with
-					<router-link to="/register">new account</router-link>
-				</p>
-				<h4>OR</h4>
-				<p>
-					<router-link to="/login">login to existing account</router-link>
-				</p>
+				<strong class=" ion-text-uppercase">login form here</strong>
 			</div>
 		</ion-content>
 
@@ -48,7 +38,7 @@ import {
 import { defineComponent } from "vue";
 
 export default defineComponent({
-	name: "HomePage",
+	name: "LoginPage",
 	components: {
 		IonContent,
 		IonHeader,
