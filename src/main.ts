@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import { IonicVue } from "@ionic/vue";
 import { createPinia } from "pinia";
+import piniaPluginPersistedstate  from "pinia-plugin-persistedstate";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import { plugin, defaultConfig } from "@formkit/vue";
@@ -25,9 +26,10 @@ import "@ionic/vue/css/display.css";
 import '@/styles/app.css';
 
 const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 
 const axiosInstance = axios.create({
-	baseURL: "https://u-blog-backend.com/",
+	baseURL: process.env.VUE_APP_API_KEY,
 });
 
 const app = createApp(App);
