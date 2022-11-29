@@ -1,91 +1,38 @@
 <template>
 	<ion-page>
-		<ion-header :translucent="true">
-			<ion-toolbar>
-				<ion-title>U-Blog</ion-title>
-			</ion-toolbar>
-		</ion-header>
-
 		<ion-content :fullscreen="true">
-			<ion-header collapse="condense">
-				<ion-toolbar>
-					<ion-title size="large">Blank</ion-title>
-				</ion-toolbar>
-			</ion-header>
-
-			<div id="container">
-				<strong
-					>Welcome to U-Blog App</strong
-				>
-				<p>
-					Start with
-					<router-link to="/register">new account</router-link>
-				</p>
-				<h4>OR</h4>
-				<p>
-					<router-link to="/login">login to existing account</router-link>
-				</p>
+			<div class="grid h-screen place-items-center">
+				<div>
+					<strong class="text-gray-900 font-semibold text-xl"
+						>Welcome to U-Blog App</strong
+					>
+					<div>
+						<p class="text-gray-800 text-center">
+							Start with
+							<router-link to="/register" class="text-blue-500"
+								>new account</router-link
+							>
+						</p>
+						<h4 class="text-center">OR</h4>
+						<p class="text-center">
+							<router-link to="/login" class="text-blue-500"
+								>login</router-link
+							>
+							<span> to existing account</span>
+						</p>
+					</div>
+				</div>
 			</div>
 		</ion-content>
-
-		<ion-footer>
-			<ion-toolbar>
-				<ion-title>Footer</ion-title>
-			</ion-toolbar>
-		</ion-footer>
 	</ion-page>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import {
 	IonContent,
 	IonHeader,
-	IonFooter,
 	IonPage,
 	IonTitle,
 	IonToolbar,
 } from "@ionic/vue";
-import { defineComponent } from "vue";
-
-export default defineComponent({
-	name: "HomePage",
-	components: {
-		IonContent,
-		IonHeader,
-		IonFooter,
-		IonPage,
-		IonTitle,
-		IonToolbar,
-	},
-});
 </script>
-
-<style scoped>
-#container {
-	text-align: center;
-
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 50%;
-	transform: translateY(-50%);
-}
-
-#container strong {
-	font-size: 20px;
-	line-height: 26px;
-}
-
-#container p {
-	font-size: 16px;
-	line-height: 22px;
-
-	color: #8c8c8c;
-
-	margin: 0;
-}
-
-#container a {
-	text-decoration: none;
-}
-</style>
