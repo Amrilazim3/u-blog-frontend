@@ -1,81 +1,54 @@
 <template>
 	<ion-page>
-		<ion-header :translucent="true">
-			<ion-toolbar>
-				<ion-title>U-Blog</ion-title>
-			</ion-toolbar>
-		</ion-header>
-
 		<ion-content :fullscreen="true">
-			<ion-header collapse="condense">
-				<ion-toolbar>
-					<ion-title size="large">Welcome back, please login</ion-title>
-				</ion-toolbar>
-			</ion-header>
-
-			<div id="container">
-				<strong class=" ion-text-uppercase">login form here</strong>
+			<div
+				class="min-h-screen min-w-full flex flex-col justify-center items-center"
+			>
+				<FormKit
+					type="form"
+					submit-label="Login"
+					@submit="login"
+					form-class="$reset w-96"
+					:actions="false"
+				>
+					<h3 class="uppercase font-semibold text-xl mb-6 grow">
+						Welcome back!
+					</h3>
+					<FormKit
+						type="email"
+						name="email"
+						label="Email address"
+						placeholder="Enter your email address"
+						validation="required|email"
+					/>
+					<FormKit
+						type="password"
+						name="password"
+						label="Password"
+						placeholder="Enter your password"
+						validation="required"
+					/>
+					<FormKit
+						type="submit"
+						label="Login"
+						input-class="$reset w-full text-white p-3 border rounded-md bg-blue-500 hover:bg-blue-600"
+					/>
+					<p class="text-sm">
+						don't have an account?
+						<router-link to="/register" class="text-blue-500"
+							>Register now</router-link
+						>
+					</p>
+				</FormKit>
 			</div>
 		</ion-content>
-
-		<ion-footer>
-			<ion-toolbar>
-				<ion-title>Footer</ion-title>
-			</ion-toolbar>
-		</ion-footer>
 	</ion-page>
 </template>
 
-<script lang="ts">
-import {
-	IonContent,
-	IonHeader,
-	IonFooter,
-	IonPage,
-	IonTitle,
-	IonToolbar,
-} from "@ionic/vue";
-import { defineComponent } from "vue";
+<script lang="ts" setup>
+import { IonContent, IonPage } from "@ionic/vue";
 
-export default defineComponent({
-	name: "LoginPage",
-	components: {
-		IonContent,
-		IonHeader,
-		IonFooter,
-		IonPage,
-		IonTitle,
-		IonToolbar,
-	},
-});
+const login = () => {
+	console.log("hello world");
+};
 </script>
-
-<style scoped>
-#container {
-	text-align: center;
-
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 50%;
-	transform: translateY(-50%);
-}
-
-#container strong {
-	font-size: 20px;
-	line-height: 26px;
-}
-
-#container p {
-	font-size: 16px;
-	line-height: 22px;
-
-	color: #8c8c8c;
-
-	margin: 0;
-}
-
-#container a {
-	text-decoration: none;
-}
-</style>
