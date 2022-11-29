@@ -1,142 +1,73 @@
 <template>
 	<ion-page>
-		<ion-header :translucent="true">
-			<ion-toolbar>
-				<ion-title>U-Blog</ion-title>
-			</ion-toolbar>
-		</ion-header>
-
 		<ion-content :fullscreen="true">
-			<div id="container">
-				<form>
-					<strong class="ion-text-uppercase"
-						>Create new account</strong
-					>
+			<div
+				class="min-h-screen min-w-full flex flex-col justify-center items-center"
+			>
+				<FormKit
+					type="form"
+					submit-label="Register"
+					@submit="register"
+					form-class="$reset w-96"
+					:actions="false"
+				>
+					<h3 class="uppercase font-semibold text-xl mb-6 grow">
+						Create your account
+					</h3>
 					<FormKit
-						v-for="t in inputTypes"
-						:key="t"
-						:label="`This is a ${t} input`"
-						:type="t"
-						:placeholder="`${t} input placeholder`"
-						:options="inputOptions[t] ? inputOptions[t] : null"
-						:help="`Help text for the ${t} input`"
-						:multiple="t === 'file' ? true : undefined"
-						:disabled="t === 'date' ? true : undefined"
-						:validation="
-							t === 'email' ? 'required|email' : 'required'
-						"
-						:validation-visibility="
-							t === 'email' ? 'live' : 'blur'
-						"
-						:validation-label="t"
+						type="text"
+						name="name"
+						label="Name"
+						placeholder="Enter your name"
+						validation="required"
 					/>
-					<h1>abah bas</h1>
-				</form>
+					<FormKit
+						type="email"
+						name="email"
+						label="Email address"
+						placeholder="Enter your email address"
+						validation="required|email"
+					/>
+					<FormKit
+						type="password"
+						name="password"
+						label="Password"
+						placeholder="Enter your password"
+						validation="required"
+					/>
+					<FormKit
+						type="password"
+						name="password_confirm"
+						label="Password Confirmation"
+						placeholder="Re-enter your password"
+						validation="required|confirm"
+					/>
+					<FormKit
+						type="submit"
+						label="Register"
+						input-class="$reset w-full text-white p-3 border rounded-md bg-blue-500 hover:bg-blue-600"
+					/>
+					<p class="text-sm">
+						already have an account?
+						<router-link to="/login" class="text-blue-500"
+							>login here</router-link
+						>
+					</p>
+				</FormKit>
 			</div>
 		</ion-content>
-
-		<ion-footer>
-			<ion-toolbar>
-				<ion-title>Footer</ion-title>
-			</ion-toolbar>
-		</ion-footer>
 	</ion-page>
 </template>
 
-<script lang="ts">
-import {
-	IonContent,
-	IonHeader,
-	IonFooter,
-	IonPage,
-	IonTitle,
-	IonToolbar,
-} from "@ionic/vue";
-import { defineComponent } from "vue";
+<script lang="ts" setup>
+import { IonContent, IonPage } from "@ionic/vue";
+import { onMounted } from "vue";
 
-export default defineComponent({
-	name: "RegisterPage",
-	components: {
-		IonContent,
-		IonHeader,
-		IonFooter,
-		IonPage,
-		IonTitle,
-		IonToolbar,
-	},
-	data() {
-		return {
-			inputTypes: [
-				"button",
-				"checkbox",
-				"color",
-				"date",
-				"datetime-local",
-				"email",
-				"file",
-				"month",
-				"number",
-				"password",
-				"radio",
-				"range",
-				"search",
-				"select",
-				"submit",
-				"tel",
-				"text",
-				"textarea",
-				"time",
-				"url",
-				"week",
-			],
-			inputOptions: {
-				checkbox: [
-					"I like Tailwind",
-					"I also like FormKit",
-					"I like other things too",
-				],
-				radio: [
-					"I like Tailwind",
-					"I like FormKit",
-					"I like everything",
-				],
-				select: [
-					"I like Tailwind",
-					"I like FormKit",
-					"I like everything",
-				],
-			},
-		};
-	},
+const register = () => {
+	console.log("hello world");
+};
+
+onMounted(() => {
+	console.log(process.env.VUE_APP_API_KEY);
 });
 </script>
-
-<style scoped>
-#container {
-	text-align: center;
-
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 50%;
-	transform: translateY(-50%);
-}
-
-#container strong {
-	font-size: 20px;
-	line-height: 26px;
-}
-
-#container p {
-	font-size: 16px;
-	line-height: 22px;
-
-	color: #8c8c8c;
-
-	margin: 0;
-}
-
-#container a {
-	text-decoration: none;
-}
-</style>
