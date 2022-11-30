@@ -3,7 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import { IonicVue } from "@ionic/vue";
 import { createPinia } from "pinia";
-import piniaPluginPersistedstate  from "pinia-plugin-persistedstate";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import { plugin, defaultConfig } from "@formkit/vue";
@@ -23,7 +23,7 @@ import "@ionic/vue/css/text-transformation.css";
 import "@ionic/vue/css/flex-utils.css";
 import "@ionic/vue/css/display.css";
 /* tailwindcss styles */
-import '@/styles/app.css';
+import "@/styles/app.css";
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
@@ -36,6 +36,7 @@ const app = createApp(App);
 app.use(IonicVue);
 app.use(router);
 app.use(VueAxios, axiosInstance);
+app.provide('axios', app.config.globalProperties.axios);
 app.use(pinia);
 app.use(plugin, defaultConfig);
 
