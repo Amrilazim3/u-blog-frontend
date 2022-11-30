@@ -28,11 +28,5 @@
 </template>
 
 <script lang="ts" setup>
-import {
-	IonContent,
-	IonHeader,
-	IonPage,
-	IonTitle,
-	IonToolbar,
-} from "@ionic/vue";
+import { IonContent, IonPage } from "@ionic/vue";
 </script>
