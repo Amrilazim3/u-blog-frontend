@@ -6,9 +6,10 @@
 			>
 				<FormKit
 					type="form"
+					id="login-form"
 					submit-label="Login"
 					@submit="login"
-					form-class="$reset w-96"
+					form-class="$reset"
 					:actions="false"
 				>
 					<h3 class="uppercase font-semibold text-xl mb-6 grow">
@@ -46,9 +47,28 @@
 </template>
 
 <script lang="ts" setup>
+import router from "@/router";
+import { useAuthStore } from "@/stores/auth";
 import { IonContent, IonPage } from "@ionic/vue";
+import { reactive } from "vue";
 
-const login = () => {
-	console.log("hello world");
+interface Form {
+	email: string;
+	password: string;
+}
+
+const auth = useAuthStore();
+
+const form: Form = reactive({
+	email: "",
+	password: ""	
+});
+
+const login = async (data: any, node: any) => {
+	const loginRes = await auth.login(data, node);
+
+	if (loginRes == 200) {
+		router.push("/explore");
+	}
 };
 </script>
