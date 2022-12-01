@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
-import { inject, reactive, watch } from "vue";
+import { reactive, watch } from "vue";
 import { useHeaders } from "@/composables/headers";
+import { axiosInstance } from "../main";
 
 interface Status {
 	token: string | null;
@@ -23,7 +24,7 @@ interface Form {
 export const useAuthStore = defineStore(
 	"auth",
 	() => {
-		const axios: any = inject("axios");
+		const axios = axiosInstance;
 
 		const status: Status = reactive({
 			token: null,
@@ -78,8 +79,14 @@ export const useAuthStore = defineStore(
 		};
 
 		const logout = async () => {
+			console.log("first");
+
+			console.log(axios);
+
 			try {
 				const response = await axios.get("logout", useHeaders());
+
+				console.log("asdadasd");
 
 				if (response.data.success) {
 					setUser({
