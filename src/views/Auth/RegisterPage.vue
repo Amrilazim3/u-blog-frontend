@@ -21,7 +21,6 @@
 						label="Name"
 						placeholder="Enter your name"
 						validation="required"
-						v-model="form.name"
 					/>
 					<FormKit
 						type="email"
@@ -29,7 +28,6 @@
 						label="Email address"
 						placeholder="Enter your email address"
 						validation="required|email"
-						v-model="form.email"
 					/>
 					<FormKit
 						type="password"
@@ -37,7 +35,6 @@
 						label="Password"
 						placeholder="Enter your password"
 						validation="required|length:6"
-						v-model="form.password"
 					/>
 					<FormKit
 						type="password"
@@ -45,7 +42,6 @@
 						label="Password Confirmation"
 						placeholder="Re-enter your password"
 						validation="required|confirm"
-						v-model="form.password_confirm"
 					/>
 					<FormKit
 						type="submit"
@@ -67,29 +63,12 @@
 <script lang="ts" setup>
 import { IonContent, IonPage } from "@ionic/vue";
 import { useAuthStore } from "@/stores/auth";
-import { reactive } from "vue-demi";
 import router from "@/router";
-
-interface Form {
-	name: string;
-	email: string;
-	password: string;
-	password_confirm: string;
-}
 
 const auth = useAuthStore();
 
-const form: Form = reactive({
-	name: "",
-	email: "",
-	password: "",
-	password_confirm: "",
-});
-
 const save = async (data: any, node: any) => {
-	const form = data;
-
-	const registerStatus = await auth.register(form, node);
+	const registerStatus = await auth.register(data, node);
 
 	if (registerStatus == 200) {
 		router.push("/explore");
