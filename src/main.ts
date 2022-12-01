@@ -28,7 +28,7 @@ import "@/styles/app.css";
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
 	baseURL: process.env.VUE_APP_API_KEY,
 });
 
