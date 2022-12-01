@@ -50,19 +50,8 @@
 import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { IonContent, IonPage } from "@ionic/vue";
-import { reactive } from "vue";
-
-interface Form {
-	email: string;
-	password: string;
-}
 
 const auth = useAuthStore();
-
-const form: Form = reactive({
-	email: "",
-	password: ""	
-});
 
 const login = async (data: any, node: any) => {
 	const loginRes = await auth.login(data, node);
