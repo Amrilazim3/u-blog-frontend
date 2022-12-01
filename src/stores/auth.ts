@@ -1,8 +1,9 @@
 import { defineStore } from "pinia";
 import { inject, reactive, watch } from "vue";
+import { useHeaders } from "@/composables/headers";
 
 interface Status {
-	token: boolean;
+	token: string | null;
 	user: User | null;
 }
 
@@ -16,7 +17,7 @@ interface Form {
 	name?: string;
 	email: string;
 	password: string;
-	passwordConfirm?: string;
+	password_confirm?: string;
 }
 
 export const useAuthStore = defineStore(
@@ -25,7 +26,7 @@ export const useAuthStore = defineStore(
 		const axios: any = inject("axios");
 
 		const status: Status = reactive({
-			token: false,
+			token: null,
 			user: {
 				name: "",
 				email: "",
@@ -42,31 +43,71 @@ export const useAuthStore = defineStore(
 		);
 
 		/* methods */
-		const register = async (form: Form) => {
+		const register = async (form: Form, node: any) => {
 			try {
 				const response = await axios.post("register", form);
 
 				setUser(response.data);
 
-				return {
-					status: response.status,
-				};
+				return response.status;
 			} catch (error: any) {
-				return error.response;
+				node.setErrors(
+					[error.response.data.message],
+					error.response.data.errors
+				);
+
+				return error.response.status;
 			}
 		};
 
-		const login = (form: Form) => {
-			console.log(form);
+		const login = async (form: Form, node: any) => {
+			try {
+				const response = await axios.post("login", form);
+
+				setUser(response.data);
+
+				return response.status;
+			} catch (error: any) {
+				node.setErrors(
+					[error.response.data.message],
+					error.response.data.errors
+				);
+
+				return error.response.status;
+			}
+		};
+
+		const logout = async () => {
+			try {
+				const response = await axios.get("logout", useHeaders());
+
+				if (response.data.success) {
+					setUser({
+						token: null,
+						user: null,
+					});
+				}
+
+				return response.status;
+			} catch (error: any) {
+				return error.response.status;
+			}
 		};
 
 		const setUser = (userData: any) => {
 			status.token = userData.token;
-			if (status.user !== null) {
-				status.user.name = userData.user.name;
-				status.user.email = userData.user.email;
-				status.user.isVerifiedEmail =
-					userData.user.email_verified_at == null ? false : true;
+
+			if (userData.user == null) {
+				status.user = null;
+			}
+
+			if (userData.user) {
+				status.user = {
+					name: userData.user.name,
+					email: userData.user.email,
+					isVerifiedEmail:
+						userData.user.email_verified_at == null ? false : true,
+				};
 			}
 		};
 
@@ -76,7 +117,7 @@ export const useAuthStore = defineStore(
 			setUser(newAuth);
 		}
 
-		return { status, register, login };
+		return { status, register, login, logout };
 	},
 	{
 		persist: true,
