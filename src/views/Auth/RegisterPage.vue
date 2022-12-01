@@ -36,7 +36,7 @@
 						name="password"
 						label="Password"
 						placeholder="Enter your password"
-						validation="required"
+						validation="required|length:6"
 						v-model="form.password"
 					/>
 					<FormKit
@@ -45,7 +45,7 @@
 						label="Password Confirmation"
 						placeholder="Re-enter your password"
 						validation="required|confirm"
-						v-model="form.passwordConfirm"
+						v-model="form.password_confirm"
 					/>
 					<FormKit
 						type="submit"
@@ -68,14 +68,13 @@
 import { IonContent, IonPage } from "@ionic/vue";
 import { useAuthStore } from "@/stores/auth";
 import { reactive } from "vue-demi";
-import { setErrors } from "@formkit/vue";
 import router from "@/router";
 
 interface Form {
 	name: string;
 	email: string;
 	password: string;
-	passwordConfirm: string;
+	password_confirm: string;
 }
 
 const auth = useAuthStore();
@@ -84,21 +83,16 @@ const form: Form = reactive({
 	name: "",
 	email: "",
 	password: "",
-	passwordConfirm: "",
+	password_confirm: "",
 });
 
-const save = async () => {
-	const registerRes = await auth.register(form);
+const save = async (data: any, node: any) => {
+	const form = data;
 
-	if (registerRes.status == 422) {
-		setErrors(
-			"register-form",
-			[registerRes.data.message],
-			registerRes.data.errors
-		);
-		return;
+	const registerStatus = await auth.register(form, node);
+
+	if (registerStatus == 200) {
+		router.push("/explore");
 	}
-
-	router.push("/explore");
 };
 </script>
