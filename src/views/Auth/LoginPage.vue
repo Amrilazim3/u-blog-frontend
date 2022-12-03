@@ -57,7 +57,7 @@ const login = async (data: any, node: any) => {
 	const loginRes = await auth.login(data, node);
 
 	if (loginRes == 200) {
-		router.push("/explore");
+		router.push("/app");
 	}
 };
 </script>
