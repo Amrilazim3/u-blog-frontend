@@ -7,7 +7,7 @@ import {
 import HomePage from "@/views/HomePage.vue";
 import RegisterPage from "@/views/Auth/RegisterPage.vue";
 import LoginPage from "@/views/Auth/LoginPage.vue";
-import ExplorePage from "@/views/Blog/ExplorePage.vue";
+import MainPage from "@/views/MainPage.vue";
 import auth from "@/middleware/auth";
 
 const routes: Array<RouteRecordRaw> = [
@@ -31,12 +31,29 @@ const routes: Array<RouteRecordRaw> = [
 		component: LoginPage,
 	},
 	{
-		path: "/explore",
-		name: "Explore",
-		component: ExplorePage,
+		path: "/app/",
+		component: MainPage,
 		meta: {
 			middleware: auth,
 		},
+		children: [
+			{
+				path: "",
+				redirect: "/app/explore",
+			},
+			{
+				path: "explore",
+				component: () => import("@/views/Blog/ExplorePage.vue"),
+			},
+			{
+				path: "chat",
+				component: () => import("@/views/Chat/IndexPage.vue"),
+			},
+			{
+				path: "profile",
+				component: () => import("@/views/Profile/IndexPage.vue"),
+			},
+		],
 	},
 ];
 
