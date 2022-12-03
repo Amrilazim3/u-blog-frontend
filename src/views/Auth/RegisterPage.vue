@@ -71,7 +71,7 @@ const save = async (data: any, node: any) => {
 	const registerStatus = await auth.register(data, node);
 
 	if (registerStatus == 200) {
-		router.push("/explore");
+		router.push("/app");
 	}
 };
 </script>
