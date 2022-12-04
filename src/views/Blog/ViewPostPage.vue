@@ -15,11 +15,13 @@
 						class="w-7 h-7 rounded bg-gray-50"
 					></ion-icon>
 				</div>
-				<img
-					src="https://picsum.photos/id/28/500/500"
-					class="object-contain"
-					alt="thumb pic"
-				/>
+				<div class="flex justify-center">
+					<img
+						src="https://picsum.photos/id/28/500/500"
+						class="object-contain"
+						alt="thumb pic"
+					/>
+				</div>
 				<div class="p-4 space-y-4">
 					<div class="space-y-5">
 						<div class="flex space-x-3">
@@ -43,11 +45,11 @@
 								<div class="space-x-1.5">
 									<ion-icon
 										:icon="heartCircleOutline"
-										class="w-5 h-5"
+										class="w-7 h-7 fill-red-500"
 									></ion-icon>
 									<ion-icon
 										:icon="chatboxOutline"
-										class="w-5 h-5"
+										class="w-7 h-7"
 									></ion-icon>
 								</div>
 							</div>
@@ -91,7 +93,6 @@ import {
 	chevronBackOutline,
 	reorderTwoOutline,
 	personCircleOutline,
-	heartOutline,
 	chatboxOutline,
 	heartCircleOutline,
 } from "ionicons/icons";
