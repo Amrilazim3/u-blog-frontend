@@ -46,6 +46,10 @@ const routes: Array<RouteRecordRaw> = [
 				component: () => import("@/views/Blog/ExplorePage.vue"),
 			},
 			{
+				path: "users/:user/posts/:post",
+				component: () => import("@/views/Blog/ViewPostPage.vue"),
+			},
+			{
 				path: "chat",
 				component: () => import("@/views/Chat/IndexPage.vue"),
 			},
