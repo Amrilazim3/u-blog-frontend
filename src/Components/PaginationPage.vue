@@ -30,8 +30,8 @@ defineProps({
 
 const post = usePostStore();
 
-const paginateNext = async (link: any) => {
-	await post.fetchPosts(link);
+const paginateNext = async (link: string) => {
+	await post.getPosts(link);
 	window.scrollTo(0, 0);
 };
 </script>
