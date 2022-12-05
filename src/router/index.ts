@@ -46,8 +46,8 @@ const routes: Array<RouteRecordRaw> = [
 				component: () => import("@/views/Blog/ExplorePage.vue"),
 			},
 			{
-				path: "users/:user/posts/:post",
-				component: () => import("@/views/Blog/ViewPostPage.vue"),
+				path: "users/:user/posts/:post/show",
+				component: () => import("@/views/User/Post/ShowPage.vue"),
 			},
 			{
 				path: "chat",
@@ -57,12 +57,11 @@ const routes: Array<RouteRecordRaw> = [
 				path: "account/profile",
 				component: () => import("@/views/Account/ProfilePage.vue"),
 			},
+			{
+				path: "account/posts/:post/show",
+				component: () => import("@/views/Account/Post/ShowPage.vue"),
+			}
 		],
-	},
-	{
-		path: "/account/posts/:post/view",
-		name: "Create Post",
-		component: () => import("@/views/Account/Post/CreatePage.vue"),
 	},
 	{
 		path: "/account/posts/create",
