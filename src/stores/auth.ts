@@ -9,8 +9,11 @@ interface Status {
 }
 
 interface User {
+	id: number;
 	name: string;
 	email: string;
+	profileImage: string;
+	bio: string;
 	isVerifiedEmail: boolean;
 }
 
@@ -29,9 +32,12 @@ export const useAuthStore = defineStore(
 		const status: Status = reactive({
 			token: null,
 			user: {
+				id: 0,
 				name: "",
 				email: "",
 				isVerifiedEmail: false,
+				profileImage: "",
+				bio: ""
 			},
 		});
 
@@ -79,14 +85,8 @@ export const useAuthStore = defineStore(
 		};
 
 		const logout = async () => {
-			console.log("first");
-
-			console.log(axios);
-
 			try {
 				const response = await axios.get("logout", useHeaders());
-
-				console.log("asdadasd");
 
 				if (response.data.success) {
 					setUser({
@@ -110,10 +110,13 @@ export const useAuthStore = defineStore(
 
 			if (userData.user) {
 				status.user = {
+					id: userData.user.id,
 					name: userData.user.name,
 					email: userData.user.email,
 					isVerifiedEmail:
 						userData.user.email_verified_at == null ? false : true,
+					profileImage: userData.user.profile_image_url,
+					bio: userData.user.bio,
 				};
 			}
 		};
