@@ -7,6 +7,7 @@ import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import { plugin, defaultConfig } from "@formkit/vue";
+import PaginationPage from "@/Components/PaginationPage.vue";
 /* formkit themes */
 import "@formkit/themes/genesis";
 /* Core CSS required for Ionic components to work properly */
@@ -39,6 +40,7 @@ app.use(VueAxios, axiosInstance);
 app.provide('axios', app.config.globalProperties.axios);
 app.use(pinia);
 app.use(plugin, defaultConfig);
+app.component("PaginationPage", PaginationPage);
 
 router.isReady().then(() => {
 	app.mount("#app");
