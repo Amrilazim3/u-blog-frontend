@@ -51,83 +51,65 @@
 						edit profile
 					</button>
 				</div>
-				<div class="space-y-5 mt-10">
-					<div
-						class="space-y-3 bg-gray-100 hover:bg-gray-50 rounded-md p-2.5"
-					>
-						<div class="flex justify-center">
-							<img
-								src="https://picsum.photos/id/28/400/400"
-								class="rounded-md object-fill"
-								alt="thumb pic"
-							/>
-						</div>
-						<div>
+				<template v-if="postStore.data.hasPosts">
+					<div class="space-y-5 mt-10">
+						<template v-for="post in postStore.data.posts" :key="post.id">
 							<div
-								class="flex justify-between mb-3 text-sm font-light"
+								class="space-y-3 bg-gray-100 hover:bg-gray-50 rounded-md p-2.5"
 							>
-								<p>posted 2 days ago</p>
-								<p>15 likes</p>
+								<div class="flex justify-center">
+									<img
+										:src="post['thumbnail_url']"
+										class="rounded-md object-fill"
+										alt="thumb pic"
+									/>
+								</div>
+								<div>
+									<div
+										class="flex justify-between mb-3 text-sm font-light"
+									>
+										<p>
+											posted on {{ post["created_at"] }}
+										</p>
+										<p>15 likes</p>
+									</div>
+									<h2 class="text-lg font-semibold">
+										{{ post["title"] }}
+									</h2>
+								</div>
 							</div>
-							<h2 class="text-lg font-semibold">
-								Title of this post
-							</h2>
-						</div>
+						</template>
 					</div>
-					<div
-						class="space-y-3 bg-gray-100 hover:bg-gray-50 rounded-md p-2.5"
-					>
-						<div class="flex justify-center">
-							<img
-								src="https://picsum.photos/id/33/400/400"
-								class="rounded-md object-fill"
-								alt="thumb pic"
-							/>
-						</div>
-						<div>
-							<div
-								class="flex justify-between mb-3 text-sm font-light"
-							>
-								<p>posted 2 days ago</p>
-								<p>15 likes</p>
-							</div>
-							<h2 class="text-lg font-semibold">
-								Title of this post
-							</h2>
-						</div>
+				</template>
+				<template v-else>
+					<div class="mt-10">
+						<h1 class="text-lg">No post created</h1>
 					</div>
-					<div
-						class="space-y-3 bg-gray-100 hover:bg-gray-50 rounded-md p-2.5"
-					>
-						<div class="flex justify-center">
-							<img
-								src="https://picsum.photos/id/30/400/400"
-								class="rounded-md object-fill"
-								alt="thumb pic"
-							/>
-						</div>
-						<div>
-							<div
-								class="flex justify-between mb-3 text-sm font-light"
-							>
-								<p>posted 2 days ago</p>
-								<p>15 likes</p>
-							</div>
-							<h2 class="text-lg font-semibold">
-								Title of this post
-							</h2>
-						</div>
-					</div>
-				</div>
+				</template>
+				<PaginationPage :links="postStore.data.links" />
 			</div>
 		</ion-content>
 	</ion-page>
 </template>
 
 <script lang="ts" setup>
-import { IonPage, IonContent } from "@ionic/vue";
+import { IonPage, IonContent, onIonViewWillEnter } from "@ionic/vue";
 import { useAuthStore } from "@/stores/auth";
-import router from "@/router";
+import { usePostStore } from "@/stores/post";
+// import router from "@/router";
+// import { inject } from "vue";
 
 const auth = useAuthStore();
+
+const postStore = usePostStore();
+
+// const axios: any = inject("axios");
+
+onIonViewWillEnter(async () => {
+	getPosts();
+});
+
+const getPosts = async () => {
+	await postStore.getPosts("/user/posts");
+}
 </script>
