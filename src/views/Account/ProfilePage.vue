@@ -6,7 +6,11 @@
 				<div class="flex space-x-6">
 					<div class="w-36">
 						<img
-							src="https://xsgames.co/randomusers/assets/avatars/male/17.jpg"
+							:src="
+								auth.status.user?.profileImage
+									? auth.status.user.profileImage
+									: 'https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg'
+							"
 							alt="profile pic"
 							class="object-fill rounded-full w-full h-full"
 						/>
@@ -29,8 +33,16 @@
 					</div>
 				</div>
 				<div class="mt-4">
-					<h2 class="text-lg font-semibold">John wick boi</h2>
-					<p class="text-sm">My bio is i like to eat</p>
+					<h2 class="text-lg font-semibold">
+						{{ auth.status.user?.name }}
+					</h2>
+					<p class="text-sm">
+						{{
+							auth.status.user?.bio
+								? auth.status.user.bio
+								: "No bio yet"
+						}}
+					</p>
 				</div>
 				<div class="mt-5">
 					<button
@@ -40,7 +52,9 @@
 					</button>
 				</div>
 				<div class="space-y-5 mt-10">
-					<div class="space-y-3 bg-gray-100 hover:bg-gray-50 rounded-md p-2.5">
+					<div
+						class="space-y-3 bg-gray-100 hover:bg-gray-50 rounded-md p-2.5"
+					>
 						<div class="flex justify-center">
 							<img
 								src="https://picsum.photos/id/28/400/400"
@@ -49,14 +63,20 @@
 							/>
 						</div>
 						<div>
-							<div class="flex justify-between mb-3 text-sm font-light">
+							<div
+								class="flex justify-between mb-3 text-sm font-light"
+							>
 								<p>posted 2 days ago</p>
 								<p>15 likes</p>
 							</div>
-							<h2 class="text-lg font-semibold">Title of this post</h2>
+							<h2 class="text-lg font-semibold">
+								Title of this post
+							</h2>
 						</div>
 					</div>
-					<div class="space-y-3 bg-gray-100 hover:bg-gray-50 rounded-md p-2.5">
+					<div
+						class="space-y-3 bg-gray-100 hover:bg-gray-50 rounded-md p-2.5"
+					>
 						<div class="flex justify-center">
 							<img
 								src="https://picsum.photos/id/33/400/400"
@@ -65,14 +85,20 @@
 							/>
 						</div>
 						<div>
-							<div class="flex justify-between mb-3 text-sm font-light">
+							<div
+								class="flex justify-between mb-3 text-sm font-light"
+							>
 								<p>posted 2 days ago</p>
 								<p>15 likes</p>
 							</div>
-							<h2 class="text-lg font-semibold">Title of this post</h2>
+							<h2 class="text-lg font-semibold">
+								Title of this post
+							</h2>
 						</div>
 					</div>
-					<div class="space-y-3 bg-gray-100 hover:bg-gray-50 rounded-md p-2.5">
+					<div
+						class="space-y-3 bg-gray-100 hover:bg-gray-50 rounded-md p-2.5"
+					>
 						<div class="flex justify-center">
 							<img
 								src="https://picsum.photos/id/30/400/400"
@@ -81,11 +107,15 @@
 							/>
 						</div>
 						<div>
-							<div class="flex justify-between mb-3 text-sm font-light">
+							<div
+								class="flex justify-between mb-3 text-sm font-light"
+							>
 								<p>posted 2 days ago</p>
 								<p>15 likes</p>
 							</div>
-							<h2 class="text-lg font-semibold">Title of this post</h2>
+							<h2 class="text-lg font-semibold">
+								Title of this post
+							</h2>
 						</div>
 					</div>
 				</div>
@@ -100,12 +130,4 @@ import { useAuthStore } from "@/stores/auth";
 import router from "@/router";
 
 const auth = useAuthStore();
-
-const logout = async () => {
-	const logoutRes = await auth.logout();
-
-	if (logoutRes == 200) {
-		router.push("/login");
-	}
-};
 </script>
