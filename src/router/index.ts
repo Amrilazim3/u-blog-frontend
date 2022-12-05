@@ -54,11 +54,26 @@ const routes: Array<RouteRecordRaw> = [
 				component: () => import("@/views/Chat/IndexPage.vue"),
 			},
 			{
-				path: "profile",
-				component: () => import("@/views/Profile/IndexPage.vue"),
+				path: "account/profile",
+				component: () => import("@/views/Account/ProfilePage.vue"),
 			},
 		],
 	},
+	{
+		path: "/account/posts/:post/view",
+		name: "Create Post",
+		component: () => import("@/views/Account/Post/CreatePage.vue"),
+	},
+	{
+		path: "/account/posts/create",
+		name: "Create Post",
+		component: () => import("@/views/Account/Post/CreatePage.vue"),
+	},
+	{
+		path: "/account/posts/:post/edit",
+		name: "Edit Post",
+		component: () => import("@/views/Account/Post/EditPage.vue"),
+	}
 ];
 
 const router = createRouter({
