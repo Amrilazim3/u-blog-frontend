@@ -56,6 +56,7 @@
 						<template v-for="post in postStore.data.posts" :key="post.id">
 							<div
 								class="space-y-3 bg-gray-100 hover:bg-gray-50 rounded-md p-2.5"
+								@click="router.push(`/app/account/posts/${post['id']}/show`)"
 							>
 								<div class="flex justify-center">
 									<img
@@ -96,14 +97,11 @@
 import { IonPage, IonContent, onIonViewWillEnter } from "@ionic/vue";
 import { useAuthStore } from "@/stores/auth";
 import { usePostStore } from "@/stores/post";
-// import router from "@/router";
-// import { inject } from "vue";
+import router from "@/router";
 
 const auth = useAuthStore();
 
 const postStore = usePostStore();
-
-// const axios: any = inject("axios");
 
 onIonViewWillEnter(async () => {
 	getPosts();
