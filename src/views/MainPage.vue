@@ -14,7 +14,7 @@
 						<ion-label>Chats</ion-label>
 					</ion-tab-button>
 
-					<ion-tab-button tab="profile" href="/app/profile">
+					<ion-tab-button tab="profile" href="/app/account/profile">
 						<ion-icon :icon="personCircleOutline" />
 						<ion-label>Profile</ion-label>
 					</ion-tab-button>
