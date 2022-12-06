@@ -10,7 +10,15 @@ export const usePostStore = defineStore("post", () => {
 		hasPosts: false,
 		links: null,
 		posts: null,
+		post: null,
 	});
+
+	const clearData = () => {
+		data.hasPosts = false;
+		data.links = null;
+		data.posts = null;
+		data.post = null;
+	};
 
 	const getPosts = async (route: string) => {
 		try {
@@ -26,5 +34,17 @@ export const usePostStore = defineStore("post", () => {
 		}
 	};
 
-	return { data, getPosts };
+	const getSinglePost = async (route: string) => {
+		try {
+			const fetchRes = await axios.get(route, useHeaders());
+
+			if (fetchRes.data.post) {
+				data.post = fetchRes.data.post;
+			}
+		} catch (error: any) {
+			console.log(error);
+		}
+	};
+
+	return { data, clearData, getPosts, getSinglePost };
 });
