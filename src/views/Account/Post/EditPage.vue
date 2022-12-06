@@ -68,8 +68,13 @@
 </template>
 
 <script lang="ts" setup>
-import { IonPage, IonContent, IonIcon, onIonViewWillEnter, toastController } from "@ionic/vue";
-import { useAuthStore } from "@/stores/auth";
+import {
+	IonPage,
+	IonContent,
+	IonIcon,
+	onIonViewWillEnter,
+	toastController,
+} from "@ionic/vue";
 import { chevronBackOutline } from "ionicons/icons";
 import router from "@/router";
 import { useRoute } from "vue-router";
@@ -100,7 +105,7 @@ onIonViewWillEnter(async () => {
 		await post.getSinglePost(`user/posts/${route.params.post}`);
 	}
 
-	defaultThumbnail[0].name = post.data.post!["thumbnail_url"];
+	defaultThumbnail[0].name = post.data.post?.["thumbnail_url"] || "thumbnail-picture";
 });
 
 const save = async (data: any, node: any) => {
@@ -144,7 +149,10 @@ const save = async (data: any, node: any) => {
 			}, 1000);
 		}
 	} catch (error: any) {
-		console.log(error);
+		node.setErrors(
+			[error.response.data.message],
+			error.response.data.errors
+		);
 	}
 };
 </script>
