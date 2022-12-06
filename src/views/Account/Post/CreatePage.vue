@@ -92,7 +92,7 @@ const save = async (data: any, node: any) => {
 	try {
 		const response = await axios.post("/user/posts", form, useHeaders());
 
-		if (response.data.status) {
+		if (response.data.success) {
 			isLoading.value = false;
 
 			router.push("/app/explore");
