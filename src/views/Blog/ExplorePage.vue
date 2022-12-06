@@ -7,20 +7,26 @@
 						class="max-w-fit py-2 px-3 bg-blue-500 rounded-tr-xl rounded-br-xl text-white font-semibold"
 						>U-Blog</ion-title
 					>
-					<div>
-					</div>
+					<div></div>
 					<div class="h-6 w-6 self-center">
 						<template v-if="auth.status.user?.profileImage">
-							<img src="https://xsgames.co/randomusers/assets/avatars/male/17.jpg" alt="profile pic" class="object-cover rounded-md">
+							<img
+								src="https://xsgames.co/randomusers/assets/avatars/male/17.jpg"
+								alt="profile pic"
+								class="object-cover rounded-md"
+							/>
 						</template>
 						<template v-else>
-							<ion-icon :icon="personCircleOutline" class="h-full w-full"></ion-icon>
+							<img
+								src="https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg"
+								alt="profile icon"
+							/>
 						</template>
 					</div>
 				</div>
 			</ion-toolbar>
 		</ion-header>
-		<ion-content :fullscreen="true">
+		<ion-content :fullscreen="true" ref="contentSection">
 			<div class="p-6">
 				<form @submit.prevent="">
 					<div
@@ -66,66 +72,49 @@
 
 				<!-- blog posts list -->
 				<div class="mt-14 space-y-10">
-					<div class="flex space-x-4">
-						<div
-							class="w-36 h-36 cursor-pointer flex-shrink-0"
-							@click="router.push('/app/users/1/posts/4')"
-						>
-							<img
-								src="https://picsum.photos/id/28/400/400"
-								class="rounded-md object-fill w-full h-full"
-								alt="thumb pic"
-							/>
-						</div>
-						<div class="flex flex-col space-y-2 w-40">
-							<h1
-								class="text-lg font-semibold cursor-pointer"
-								@click="router.push('/app/users/1/posts/4')"
-							>
-								Where we going
-							</h1>
-							<small class="text-blue-500">Kamarul azman</small>
-							<small>10 likes</small>
-						</div>
-					</div>
-					<div class="flex space-x-4">
-						<div
-							class="w-36 h-36 flex-shrink-0"
-							@click="router.push('/app/users/1/posts/4')"
-						>
-							<img
-								src="https://picsum.photos/id/30/400/400"
-								class="rounded-md object-fill w-full h-full"
-								alt="thumb pic"
-							/>
-						</div>
-						<div class="flex flex-col space-y-2 w-40">
-							<h1
-								class="text-lg font-semibold"
-								@click="router.push('/app/users/1/posts/4')"
-							>
-								Let's have a coffe
-							</h1>
-							<small class="text-blue-500">Mira azmah</small>
-							<small>10 likes</small>
-						</div>
-					</div>
-					<div class="flex space-x-4">
-						<div class="w-36 h-36 flex-shrink-0">
-							<img
-								src="https://picsum.photos/id/41/400/400"
-								class="rounded-md object-fill w-full h-full"
-								alt="thumb pic"
-							/>
-						</div>
-						<div class="flex flex-col space-y-2 w-40">
-							<h1 class="text-lg font-semibold">
-								Let's go to the town old town road yeah yeahhh
-							</h1>
-							<small class="text-blue-500">Rahman auf</small>
-							<small>10 likes</small>
-						</div>
-					</div>
+					<template v-if="data.hasPosts">
+						<template v-for="post in data.posts" :key="post.id">
+							<div class="flex space-x-4">
+								<div
+									class="w-36 h-36 cursor-pointer flex-shrink-0"
+									@click="
+										router.push(
+											`/app/users/${post['id']}/posts/${post['user']['id']}/show`
+										)
+									"
+								>
+									<img
+										:src="post['thumbnail_url']"
+										class="rounded-md object-fill w-full h-full"
+										alt="thumb pic"
+									/>
+								</div>
+								<div class="flex flex-col space-y-2 w-40">
+									<h1
+										class="text-lg font-semibold cursor-pointer"
+										@click="
+											router.push(
+												`/app/users/${post['id']}/posts/${post['user']['id']}/show`
+											)
+										"
+									>
+										{{ post["title"] }}
+									</h1>
+									<small class="text-blue-500">{{
+										post["user"]["name"]
+									}}</small>
+									<small>10 likes</small>
+								</div>
+							</div>
+						</template>
+						<PaginationPage
+							:links="data.links"
+							@paginate-next="getNextPosts"
+						/>
+					</template>
+					<template v-else>
+						<h1 class="text-lg font-semibold">No post available</h1>
+					</template>
 				</div>
 
 				<div class="mb-20 bottom-0 right-5 fixed">
@@ -150,12 +139,66 @@ import {
 	IonFab,
 	IonFabButton,
 	IonIcon,
+	onIonViewWillEnter,
 } from "@ionic/vue";
-import { add, personCircleOutline } from "ionicons/icons";
+import { add } from "ionicons/icons";
 import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
+import { reactive, ref } from "vue";
+import { inject } from "vue";
+import { useHeaders } from "@/composables/headers";
 
 const auth = useAuthStore();
+
+const axios: any = inject("axios");
+
+const data = reactive({
+	hasPosts: false,
+	links: null,
+	posts: null,
+});
+
+const contentSection: any = ref(null);
+
+onIonViewWillEnter(async () => {
+	await getPosts();
+});
+
+const getPosts = async () => {
+	try {
+		const getRes = await axios.get("/posts", useHeaders());
+
+		if (getRes.status == 200) {
+			if (getRes.data.posts.data.length > 0) {
+				data.hasPosts = true;
+				data.posts = getRes.data.posts.data;
+				data.links = getRes.data.posts.links;
+			}
+		}
+	} catch (error: any) {
+		console.log(error);
+	}
+};
+
+const getNextPosts = async (link: string) => {
+	try {
+		const nextPostsRes = await axios.get(link, useHeaders());
+
+		if (nextPostsRes.status == 200) {
+			console.log("scroll to top");
+
+			contentSection?.value?.$el?.scrollToPoint?.(0, 11, 1000);
+
+			if (nextPostsRes.data.posts.data.length > 0) {
+				data.hasPosts = true;
+				data.posts = nextPostsRes.data.posts.data;
+				data.links = nextPostsRes.data.posts.links;
+			}
+		}
+	} catch (error: any) {
+		console.log(error);
+	}
+};
 
 const createPost = () => {
 	router.push("/account/posts/create");
