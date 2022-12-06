@@ -8,16 +8,28 @@
 					<ion-icon
 						:icon="chevronBackOutline"
 						class="w-6 h-6 rounded bg-gray-50"
-						@click="router.back()"
+						@click="goBack"
 					></ion-icon>
 					<ion-icon
 						:icon="reorderTwoOutline"
+						@click="openPopover"
 						class="w-7 h-7 rounded bg-gray-50"
 					></ion-icon>
+					<ion-popover
+						:is-open="isOpenPopover"
+						@didDismiss="isOpenPopover = false"
+					>
+						<div class="p-3 space-y-2 flex flex-col">
+							<button @click="editPost">Edit</button>
+							<button class="text-red-500" @click="deletePost">
+								Delete
+							</button>
+						</div>
+					</ion-popover>
 				</div>
 				<div class="flex justify-center">
 					<img
-						src="https://picsum.photos/id/28/500/500"
+						:src="post?.data?.post?.['thumbnail_url']"
 						class="object-contain"
 						alt="thumb pic"
 					/>
@@ -25,23 +37,32 @@
 				<div class="p-4 space-y-4">
 					<div class="space-y-5">
 						<div class="flex space-x-3">
-							<ion-icon
-								:icon="personCircleOutline"
-								class="self-center w-6 h-6"
-							/>
+							<div class="h-6 w-6">
+								<template v-if="auth.status.user?.profileImage">
+									<img
+										:src="auth.status.user?.profileImage"
+										alt="profile pic"
+										class="object-cover rounded-md"
+									/>
+								</template>
+								<template v-else>
+									<img
+										src="https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg"
+										alt="profile pic"
+										class="object-cover rounded-md"
+									/>
+								</template>
+							</div>
 							<p class="text-blue-500">
-								Jane doe
-								<span
-									class="text-gray-900 font-extralight text-sm"
-									>- follow</span
-								>
+								{{ auth.status.user?.name }}
 							</p>
 						</div>
 						<div>
 							<div class="flex justify-between">
 								<h2 class="text-lg font-semibold">
-									view my own post hehe
+									{{ post?.data?.post?.["title"] }}
 								</h2>
+								<!-- feature work -->
 								<div class="space-x-1.5">
 									<ion-icon
 										:icon="heartCircleOutline"
@@ -53,6 +74,7 @@
 									></ion-icon>
 								</div>
 							</div>
+							<!-- use other relationship in the future -->
 							<div
 								class="flex space-x-2 text-gray-800 font-light text-sm"
 							>
@@ -62,23 +84,8 @@
 						</div>
 					</div>
 					<div class="space-y-2">
-						<p class="text-gray-800">
-							Lorem ipsum dolor sit amet, consectetur adipisicing
-							elit. Quibusdam autem dolor nihil quas commodi, eius
-							quae, omnis maiores velit culpa expedita repudiandae
-							beatae id cum perspiciatis debitis harum a rem?
-						</p>
-						<p class="text-gray-800">
-							Lorem ipsum dolor sit amet, consectetur adipisicing
-							elit. Quibusdam autem dolor nihil quas commodi, eius
-							quae, omnis maiores velit culpa expedita repudiandae
-							beatae id cum perspiciatis debitis harum a rem?
-						</p>
-						<p class="text-gray-800">
-							Lorem ipsum dolor sit amet, consectetur adipisicing
-							elit. Quibusdam autem dolor nihil quas commodi, eius
-							quae, omnis maiores velit culpa expedita repudiandae
-							beatae id cum perspiciatis debitis harum a rem?
+						<p class="text-gray-700">
+							{{ post?.data?.post?.["content"] }}
 						</p>
 					</div>
 				</div>
@@ -88,17 +95,85 @@
 </template>
 
 <script lang="ts" setup>
-import { IonPage, IonContent, onIonViewWillEnter } from "@ionic/vue";
+import {
+	IonPage,
+	IonContent,
+	onIonViewWillEnter,
+	IonPopover,
+	toastController,
+} from "@ionic/vue";
 import {
 	chevronBackOutline,
 	reorderTwoOutline,
-	personCircleOutline,
 	chatboxOutline,
 	heartCircleOutline,
 } from "ionicons/icons";
 import router from "@/router";
+import { useRoute } from "vue-router";
+import { usePostStore } from "@/stores/post";
+import { useAuthStore } from "@/stores/auth";
+import { useHeaders } from "@/composables/headers";
+import { useToast } from "@/composables/toast";
+import { ref } from "vue";
+import { inject } from "vue";
 
-onIonViewWillEnter(() => {
-    // console.log($)
+const route = useRoute();
+
+const post = usePostStore();
+
+const auth = useAuthStore();
+
+const toast = useToast(toastController);
+
+const axios: any = inject("axios");
+
+const isOpenPopover = ref(false);
+
+onIonViewWillEnter(async () => {
+	await post.getSinglePost(`user/posts/${route.params.post}`);
 });
+
+const goBack = () => {
+	router.back();
+
+	post.clearData();
+};
+
+const openPopover = () => {
+	isOpenPopover.value = true;
+};
+
+const editPost = () => {
+	isOpenPopover.value = false;
+	router.push(`/account/posts/${post?.data?.post?.["id"]}/edit`);
+};
+
+const deletePost = async () => {
+	try {
+		const deleteRes = await axios.delete(
+			`user/posts/${post?.data?.post?.["id"]}`,
+			useHeaders()
+		);
+
+		if (deleteRes.data.success) {
+			isOpenPopover.value = false;
+
+			router.back();
+
+			post.clearData();
+
+			setTimeout(function () {
+				toast.createToast(
+					"Post deleted",
+					3000,
+					"top",
+					"primary",
+					"font-semibold text-white"
+				);
+			}, 1000);
+		}
+	} catch (error: any) {
+		console.log(error);
+	}
+};
 </script>
