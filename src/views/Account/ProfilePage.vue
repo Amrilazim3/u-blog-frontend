@@ -80,6 +80,7 @@
 								</div>
 							</div>
 						</template>
+						<PaginationPage :links="postStore.data.links" />
 					</div>
 				</template>
 				<template v-else>
@@ -87,7 +88,6 @@
 						<h1 class="text-lg">No post created</h1>
 					</div>
 				</template>
-				<PaginationPage :links="postStore.data.links" />
 			</div>
 		</ion-content>
 	</ion-page>
