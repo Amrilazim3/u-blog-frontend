@@ -9,7 +9,7 @@
 						<ion-label>Explore</ion-label>
 					</ion-tab-button>
 
-					<ion-tab-button tab="chat" href="/app/chat">
+					<ion-tab-button tab="chat" href="/app/account/chats">
 						<ion-icon :icon="chatbubblesOutline" />
 						<ion-label>Chats</ion-label>
 					</ion-tab-button>
