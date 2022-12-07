@@ -23,7 +23,7 @@
 						name="title"
 						label="Title"
 						placeholder="Enter your post title"
-						:value="post.data.post?.['title']"
+						v-model="title"
 						validation="required"
 					/>
 					<FormKit
@@ -31,7 +31,7 @@
 						name="content"
 						label="Content"
 						placeholder="Tell your story here"
-						:value="post.data.post?.['content']"
+						v-model="content"
 						validation="required"
 					/>
 					<FormKit
@@ -78,14 +78,11 @@ import {
 import { chevronBackOutline } from "ionicons/icons";
 import router from "@/router";
 import { useRoute } from "vue-router";
-import { usePostStore } from "@/stores/post";
-import { inject, reactive, ref } from "vue";
+import { inject, ref } from "vue";
 import { useHeaders } from "@/composables/headers";
 import { useToast } from "@/composables/toast";
 
 const route = useRoute();
-
-const post = usePostStore();
 
 const axios: any = inject("axios");
 
@@ -93,7 +90,15 @@ const toast = useToast(toastController);
 
 const isLoading = ref(false);
 
-const defaultThumbnail = reactive([
+const postId = ref(null);
+
+const title = ref("");
+
+const content = ref("");
+
+const thumbnailUrl = ref("");
+
+const defaultThumbnail = ref([
 	{
 		name: "thumbnail-picture",
 		file: undefined,
@@ -101,12 +106,28 @@ const defaultThumbnail = reactive([
 ]);
 
 onIonViewWillEnter(async () => {
-	if (post.data.post == null) {
-		await post.getSinglePost(`user/posts/${route.params.post}`);
-	}
+	await getPost();
 
-	defaultThumbnail[0].name = post.data.post?.["thumbnail_url"] || "thumbnail-picture";
+	defaultThumbnail.value[0].name = thumbnailUrl.value;
 });
+
+const getPost = async () => {
+	try {
+		const getRes = await axios.get(
+			`user/posts/${route.params.post}`,
+			useHeaders()
+		);
+
+		const post = getRes.data.post;
+
+		postId.value = post.id;
+		title.value = post.title;
+		content.value = post.content;
+		thumbnailUrl.value = post.thumbnail_url;
+	} catch (error: any) {
+		console.log(error);
+	}
+};
 
 const save = async (data: any, node: any) => {
 	isLoading.value = true;
@@ -114,11 +135,11 @@ const save = async (data: any, node: any) => {
 	const form = new FormData();
 
 	data.thumbnail.forEach((fileItem: any) => {
+		form.append("_method", "patch");
 		form.append("title", data.title);
 		form.append("content", data.content);
-		form.append("_method", "patch");
 		if (fileItem.file == undefined) {
-			form.append("thumbnail", defaultThumbnail[0].name);
+			form.append("thumbnail", defaultThumbnail.value[0].name);
 			return;
 		}
 		form.append("thumbnail", fileItem.file);
@@ -126,7 +147,7 @@ const save = async (data: any, node: any) => {
 
 	try {
 		const patchRes = await axios.post(
-			`user/posts/${post?.data?.post?.["id"]}`,
+			`user/posts/${postId.value}`,
 			form,
 			useHeaders()
 		);
@@ -135,8 +156,6 @@ const save = async (data: any, node: any) => {
 			isLoading.value = false;
 
 			router.back();
-
-			post.clearData();
 
 			setTimeout(function () {
 				toast.createToast(
