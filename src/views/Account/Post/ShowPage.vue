@@ -39,9 +39,13 @@
 						<div class="flex justify-between">
 							<div class="flex space-x-3">
 								<div class="h-6 w-6">
-									<template v-if="auth.status.user?.profileImage">
+									<template
+										v-if="auth.status.user?.profileImage"
+									>
 										<img
-											:src="auth.status.user?.profileImage"
+											:src="
+												auth.status.user?.profileImage
+											"
 											alt="profile pic"
 											class="object-cover rounded-md"
 										/>
@@ -54,11 +58,17 @@
 										/>
 									</template>
 								</div>
-								<p class="text-blue-500">
+								<p
+									class="text-blue-500"
+									@click="router.push('/app/account/profile')"
+								>
 									{{ auth.status.user?.name }}
 								</p>
 							</div>
-							<span class="text-sm font-light">posted on {{ data?.post?.['created_at'] }}</span>
+							<span class="text-sm font-light"
+								>posted on
+								{{ data?.post?.["created_at"] }}</span
+							>
 						</div>
 						<div>
 							<div class="flex justify-between w-full">
