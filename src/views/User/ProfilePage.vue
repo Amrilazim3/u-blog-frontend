@@ -1,7 +1,8 @@
 <template>
 	<ion-page>
 		<ion-content :fullscreen="true" ref="contentSection">
-			<div class="p-4 mt-4">
+			<div class="px-4 pb-4 mt-4">
+				<ion-icon :icon="arrowBackOutline" class="w-5 h-5 mb-1" @click="router.back()"></ion-icon>
 				<div class="flex space-x-6">
 					<div class="w-36">
 						<img
@@ -100,7 +101,8 @@
 </template>
 
 <script lang="ts" setup>
-import { IonPage, IonContent, onIonViewWillEnter } from "@ionic/vue";
+import { IonPage, IonContent, IonIcon, onIonViewWillEnter } from "@ionic/vue";
+import { arrowBackOutline } from "ionicons/icons";
 import { useAuthStore } from "@/stores/auth";
 import router from "@/router";
 import { useRoute } from "vue-router";
