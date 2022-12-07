@@ -194,8 +194,8 @@
 							<div
 								class="flex space-x-2 text-gray-800 font-light text-sm"
 							>
-								<span>1000 likes</span>
-								<span>100 comments</span>
+								<span>{{ data?.post?.['likes_count'] }} likes</span>
+								<span @click="openCommentModal">{{ data?.post?.['comments_count'] }} comments</span>
 							</div>
 						</div>
 					</div>
