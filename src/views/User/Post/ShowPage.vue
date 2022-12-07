@@ -17,30 +17,48 @@
 				</div>
 				<div class="flex justify-center">
 					<img
-						src="https://picsum.photos/id/28/500/500"
+						:src="data?.post?.['thumbnail_url']"
 						class="object-contain"
 						alt="thumb pic"
 					/>
 				</div>
 				<div class="p-4 space-y-4">
 					<div class="space-y-5">
-						<div class="flex space-x-3">
-							<ion-icon
-								:icon="personCircleOutline"
-								class="self-center w-6 h-6"
-							/>
-							<p class="text-blue-500">
-								Jane doe
-								<span
-									class="text-gray-900 font-extralight text-sm"
-									>- follow</span
-								>
-							</p>
+						<div class="flex justify-between">
+							<div class="flex space-x-3">
+								<div class="h-6 w-6">
+									<template
+										v-if="data?.post?.['user']['profile_image_url']"
+									>
+										<img
+											:src="
+												data?.post?.['user']['profile_image_url']
+											"
+											alt="profile pic"
+											class="object-cover rounded-md"
+										/>
+									</template>
+									<template v-else>
+										<img
+											src="https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg"
+											alt="profile pic"
+											class="object-cover rounded-md"
+										/>
+									</template>
+								</div>
+								<p class="text-gray-900">
+									{{ data?.post?.['user']['name'] }} - <span class="text-blue-500">follow</span> 
+								</p>
+							</div>
+							<span class="text-sm font-light"
+								>posted on
+								{{ data?.post?.["created_at"] }}</span
+							>
 						</div>
 						<div>
-							<div class="flex justify-between">
-								<h2 class="text-lg font-semibold">
-									View other user post
+							<div class="flex justify-between w-full">
+								<h2 class="text-lg font-semibold w-3/4">
+									{{ data?.post?.["title"] }}
 								</h2>
 								<div class="space-x-1.5">
 									<ion-icon
@@ -62,23 +80,8 @@
 						</div>
 					</div>
 					<div class="space-y-2">
-						<p class="text-gray-800">
-							Lorem ipsum dolor sit amet, consectetur adipisicing
-							elit. Quibusdam autem dolor nihil quas commodi, eius
-							quae, omnis maiores velit culpa expedita repudiandae
-							beatae id cum perspiciatis debitis harum a rem?
-						</p>
-						<p class="text-gray-800">
-							Lorem ipsum dolor sit amet, consectetur adipisicing
-							elit. Quibusdam autem dolor nihil quas commodi, eius
-							quae, omnis maiores velit culpa expedita repudiandae
-							beatae id cum perspiciatis debitis harum a rem?
-						</p>
-						<p class="text-gray-800">
-							Lorem ipsum dolor sit amet, consectetur adipisicing
-							elit. Quibusdam autem dolor nihil quas commodi, eius
-							quae, omnis maiores velit culpa expedita repudiandae
-							beatae id cum perspiciatis debitis harum a rem?
+						<p class="text-gray-700">
+							{{ data?.post?.["content"] }}
 						</p>
 					</div>
 				</div>
@@ -88,7 +91,7 @@
 </template>
 
 <script lang="ts" setup>
-import { IonPage, IonContent } from "@ionic/vue";
+import { IonPage, IonContent, onIonViewWillEnter } from "@ionic/vue";
 import {
 	chevronBackOutline,
 	reorderTwoOutline,
@@ -97,4 +100,34 @@ import {
 	heartCircleOutline,
 } from "ionicons/icons";
 import router from "@/router";
+import { useRoute } from "vue-router";
+import { useHeaders } from "@/composables/headers";
+import { inject, reactive, ref } from "vue";
+
+const axios: any = inject("axios");
+
+const route = useRoute();
+
+const isOpenPopover = ref(false);
+
+const data = reactive({
+	post: null,
+});
+
+onIonViewWillEnter(async () => {
+	await getPost();
+});
+
+const getPost = async () => {
+	try {
+		const getRes = await axios.get(
+			`users/${route.params.user}/posts/${route.params.post}`,
+			useHeaders()
+		);
+
+		data.post = getRes.data.post;
+	} catch (error: any) {
+		console.log(error);
+	}
+};
 </script>
