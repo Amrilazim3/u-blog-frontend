@@ -125,7 +125,7 @@ onIonViewWillEnter(async () => {
 
 const getPosts = async () => {
 	try {
-		const getRes = await axios.get("user/posts", useHeaders());
+		const getRes = await axios.get("account/posts", useHeaders());
 
 		if (getRes.status == 200) {
 			if (getRes.data.posts.data.length > 0) {
