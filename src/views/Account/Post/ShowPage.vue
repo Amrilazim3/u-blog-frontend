@@ -77,10 +77,20 @@
 								</h2>
 								<!-- feature work -->
 								<div class="space-x-1.5">
-									<ion-icon
-										:icon="heartCircleOutline"
-										class="w-7 h-7 fill-red-500"
-									></ion-icon>
+									<template v-if="isLiked">
+										<ion-icon
+											:icon="heart"
+											class="w-7 h-7 fill-red-500"
+											@click="unlikePost"
+										></ion-icon>
+									</template>
+									<template v-else>
+										<ion-icon
+											:icon="heartOutline"
+											class="w-7 h-7"
+											@click="likePost"
+										></ion-icon>
+									</template>
 									<ion-icon
 										:icon="chatboxOutline"
 										class="w-7 h-7"
@@ -119,7 +129,8 @@ import {
 	chevronBackOutline,
 	reorderTwoOutline,
 	chatboxOutline,
-	heartCircleOutline,
+	heart,
+	heartOutline
 } from "ionicons/icons";
 import router from "@/router";
 import { useRoute } from "vue-router";
@@ -138,6 +149,8 @@ const toast = useToast(toastController);
 const axios: any = inject("axios");
 
 const isOpenPopover = ref(false);
+
+const isLiked = ref(false);
 
 const data = reactive({
 	post: null,
@@ -200,4 +213,50 @@ const deletePost = async () => {
 		console.log(error);
 	}
 };
+
+const likePost = async () => {
+	try {
+		const likeRes = await axios.post(
+			`/posts/${route.params.post}/like`,
+			null,
+			useHeaders()
+		);
+
+		if (likeRes.data.success) {
+			isLiked.value = !isLiked.value;
+		}
+	} catch (error: any) {
+		console.log(error);
+	}
+};
+
+const unlikePost = async () => {
+	try {
+		const deleteRes = await axios.delete(
+			`/posts/${route.params.post}/unlike`,
+			useHeaders()
+		);
+
+		if (deleteRes.data.success) {
+			isLiked.value = !isLiked.value;
+		}
+	} catch (error: any) {
+		console.log(error);
+	}
+};
+
+const getLikePostCondition = async () => {
+	try {
+		const checkLikeRes = await axios.get(
+			`/posts/${route.params.post}/has-like-post`,
+			useHeaders()
+		);
+
+		if (checkLikeRes.data.success) {
+			isLiked.value = !isLiked.value;
+		}
+	} catch (error: any) {
+		console.log(error);
+	}
+}
 </script>
