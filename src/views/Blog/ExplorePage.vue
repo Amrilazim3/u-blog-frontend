@@ -78,8 +78,9 @@
 								<div
 									class="w-36 h-36 cursor-pointer flex-shrink-0"
 									@click="
-										router.push(
-											`/app/users/${post['id']}/posts/${post['user']['id']}/show`
+										showSinglePost(
+											post['id'],
+											post['user']['id']
 										)
 									"
 								>
@@ -93,8 +94,9 @@
 									<h1
 										class="text-lg font-semibold cursor-pointer"
 										@click="
-											router.push(
-												`/app/users/${post['id']}/posts/${post['user']['id']}/show`
+											showSinglePost(
+												post['id'],
+												post['user']['id']
 											)
 										"
 									>
@@ -144,8 +146,7 @@ import {
 import { add } from "ionicons/icons";
 import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
-import { reactive, ref } from "vue";
-import { inject } from "vue";
+import { reactive, ref, inject } from "vue";
 import { useHeaders } from "@/composables/headers";
 
 const auth = useAuthStore();
@@ -185,8 +186,6 @@ const getNextPosts = async (link: string) => {
 		const nextPostsRes = await axios.get(link, useHeaders());
 
 		if (nextPostsRes.status == 200) {
-			console.log("scroll to top");
-
 			contentSection?.value?.$el?.scrollToPoint?.(0, 11, 1000);
 
 			if (nextPostsRes.data.posts.data.length > 0) {
@@ -198,6 +197,15 @@ const getNextPosts = async (link: string) => {
 	} catch (error: any) {
 		console.log(error);
 	}
+};
+
+const showSinglePost = (postId: number, userId: number) => {
+	if (userId == auth?.status?.user?.id) {
+		router.push(`/app/account/posts/${postId}/show`);
+		return;
+	}
+
+	router.push(`/app/users/${userId}/posts/${postId}/show`);
 };
 
 const createPost = () => {
