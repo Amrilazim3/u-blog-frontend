@@ -50,6 +50,10 @@ const routes: Array<RouteRecordRaw> = [
 				component: () => import("@/views/User/Post/ShowPage.vue"),
 			},
 			{
+				path: "users/:user/profile",
+				component: () => import("@/views/User/ProfilePage.vue"),
+			},
+			{
 				path: "account/chats",
 				component: () => import("@/views/Account/Chat/IndexPage.vue"),
 			},
