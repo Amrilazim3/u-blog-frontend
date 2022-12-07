@@ -92,7 +92,103 @@
 									<ion-icon
 										:icon="chatboxOutline"
 										class="w-7 h-7"
+										@click="openCommentModal"
 									></ion-icon>
+									<ion-modal :is-open="isOpenCommentModal">
+										<ion-header>
+											<ion-toolbar>
+												<ion-title class="font-semibold"
+													>Comments</ion-title
+												>
+												<ion-buttons slot="end">
+													<ion-button
+														@click="
+															isOpenCommentModal = false
+														"
+														>Close</ion-button
+													>
+												</ion-buttons>
+											</ion-toolbar>
+										</ion-header>
+										<ion-content class="ion-padding">
+											<div class="relative h-full">
+												<template
+													v-for="comment in data.comments"
+													:key="comment['id']"
+												>
+													<div class="py-3">
+														<div
+															class="flex justify-between mb-2"
+														>
+															<h2
+																class="text-blue-500 text-sm"
+															>
+																{{
+																	comment[
+																		"user"
+																	]["name"]
+																}}
+															</h2>
+															<small
+																class="text-sm font-light"
+																>{{
+																	comment[
+																		"created_at"
+																	]
+																}}</small
+															>
+														</div>
+														<div
+															class="flex justify-between"
+														>
+															<p class="text-sm">
+																{{
+																	comment[
+																		"message"
+																	]
+																}}
+															</p>
+															<template
+																v-if="
+																	comment[
+																		'user_id'
+																	] ==
+																	auth?.status
+																		?.user
+																		?.id
+																"
+															>
+																<ion-icon
+																	:icon="
+																		trashOutline
+																	"
+																	class="w-4 h-4"
+																	@click="
+																		deleteComment(comment['id'])
+																	"
+																></ion-icon>
+															</template>
+														</div>
+													</div>
+												</template>
+
+												<div
+													class="absolute inset-x-0 bottom-0 pb-10"
+												>
+													<FormKit
+														type="text"
+														name="name"
+														suffix-icon="submit"
+														v-model="commentMsg"
+														@suffix-icon-click="
+															comment
+														"
+														placeholder="Enter your comment"
+													/>
+												</div>
+											</div>
+										</ion-content>
+									</ion-modal>
 								</div>
 							</div>
 							<div
@@ -115,35 +211,53 @@
 </template>
 
 <script lang="ts" setup>
-import { IonPage, IonContent, onIonViewWillEnter } from "@ionic/vue";
+import {
+	IonPage,
+	IonContent,
+	onIonViewWillEnter,
+	IonModal,
+	IonHeader,
+	IonToolbar,
+	IonButtons,
+	IonButton,
+	IonTitle,
+	IonIcon,
+} from "@ionic/vue";
 import {
 	chevronBackOutline,
 	reorderTwoOutline,
-	personCircleOutline,
 	chatboxOutline,
 	heart,
 	heartOutline,
+	trashOutline,
 } from "ionicons/icons";
 import router from "@/router";
 import { useRoute } from "vue-router";
 import { useHeaders } from "@/composables/headers";
+import { useAuthStore } from "@/stores/auth";
 import { inject, reactive, ref } from "vue";
 
 const axios: any = inject("axios");
 
 const route = useRoute();
 
-const isOpenPopover = ref(false);
+const auth = useAuthStore();
 
 const isLiked = ref(false);
 
+const isOpenCommentModal = ref(false);
+
+const commentMsg = ref("");
+
 const data = reactive({
 	post: null,
+	comments: null,
 });
 
 onIonViewWillEnter(async () => {
 	await getPost();
 	await getLikePostCondition();
+	await getComments();
 });
 
 const getPost = async () => {
@@ -162,7 +276,7 @@ const getPost = async () => {
 const likePost = async () => {
 	try {
 		const likeRes = await axios.post(
-			`/posts/${route.params.post}/like`,
+			`/posts/${route.params.post}/likes`,
 			null,
 			useHeaders()
 		);
@@ -178,7 +292,7 @@ const likePost = async () => {
 const unlikePost = async () => {
 	try {
 		const deleteRes = await axios.delete(
-			`/posts/${route.params.post}/unlike`,
+			`/posts/${route.params.post}/likes`,
 			useHeaders()
 		);
 
@@ -193,7 +307,7 @@ const unlikePost = async () => {
 const getLikePostCondition = async () => {
 	try {
 		const checkLikeRes = await axios.get(
-			`/posts/${route.params.post}/has-like-post`,
+			`/posts/${route.params.post}/likes`,
 			useHeaders()
 		);
 
@@ -203,5 +317,57 @@ const getLikePostCondition = async () => {
 	} catch (error: any) {
 		console.log(error);
 	}
-}
+};
+
+const openCommentModal = () => {
+	isOpenCommentModal.value = true;
+};
+
+const comment = async () => {
+	if (commentMsg.value.length > 0) {
+		try {
+			const postCommentRes = await axios.post(
+				`/posts/${route.params.post}/comments`,
+				{ message: commentMsg.value },
+				useHeaders()
+			);
+
+			if (postCommentRes.data.success) {
+				commentMsg.value = "";
+
+				getComments();
+			}
+		} catch (error: any) {
+			console.log(error);
+		}
+	}
+};
+
+const deleteComment = async (commentId: number) => {
+	try {
+		const deleteCommentRes = await axios.delete(
+			`/posts/${route.params.post}/comments/${commentId}`,
+			useHeaders()
+		);
+
+		if (deleteCommentRes.data.success) {
+			getComments();
+		}
+	} catch (error: any) {
+		console.log(error);
+	}
+};
+
+const getComments = async () => {
+	try {
+		const getCommentsRes = await axios.get(
+			`/posts/${route.params.post}/comments`,
+			useHeaders()
+		);
+
+		data.comments = getCommentsRes.data.comments;
+	} catch (error: any) {
+		console.log(error);
+	}
+};
 </script>
