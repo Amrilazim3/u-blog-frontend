@@ -86,7 +86,7 @@
 								>
 									<img
 										:src="post['thumbnail_url']"
-										class="rounded-md object-fill w-full h-full"
+										class="rounded-md object-cover w-full h-full"
 										alt="thumb pic"
 									/>
 								</div>
@@ -102,9 +102,13 @@
 									>
 										{{ post["title"] }}
 									</h1>
-									<small class="text-blue-500">{{
-										post["user"]["name"]
-									}}</small>
+									<small
+										class="text-blue-500"
+										@click="
+											visitProfilePage(post['user']['id'])
+										"
+										>{{ post["user"]["name"] }}</small
+									>
 									<small>10 likes</small>
 								</div>
 							</div>
@@ -206,6 +210,15 @@ const showSinglePost = (postId: number, userId: number) => {
 	}
 
 	router.push(`/app/users/${userId}/posts/${postId}/show`);
+};
+
+const visitProfilePage = (userId: number) => {
+	if (userId == auth?.status?.user?.id) {
+		router.push("/app/account/profile");
+		return;
+	}
+
+	router.push(`/app/users/${userId}/profile`);
 };
 
 const createPost = () => {
