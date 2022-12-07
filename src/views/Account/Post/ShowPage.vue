@@ -29,38 +29,41 @@
 				</div>
 				<div class="flex justify-center">
 					<img
-						:src="post?.data?.post?.['thumbnail_url']"
+						:src="data?.post?.['thumbnail_url']"
 						class="object-contain"
 						alt="thumb pic"
 					/>
 				</div>
 				<div class="p-4 space-y-4">
 					<div class="space-y-5">
-						<div class="flex space-x-3">
-							<div class="h-6 w-6">
-								<template v-if="auth.status.user?.profileImage">
-									<img
-										:src="auth.status.user?.profileImage"
-										alt="profile pic"
-										class="object-cover rounded-md"
-									/>
-								</template>
-								<template v-else>
-									<img
-										src="https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg"
-										alt="profile pic"
-										class="object-cover rounded-md"
-									/>
-								</template>
+						<div class="flex justify-between">
+							<div class="flex space-x-3">
+								<div class="h-6 w-6">
+									<template v-if="auth.status.user?.profileImage">
+										<img
+											:src="auth.status.user?.profileImage"
+											alt="profile pic"
+											class="object-cover rounded-md"
+										/>
+									</template>
+									<template v-else>
+										<img
+											src="https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg"
+											alt="profile pic"
+											class="object-cover rounded-md"
+										/>
+									</template>
+								</div>
+								<p class="text-blue-500">
+									{{ auth.status.user?.name }}
+								</p>
 							</div>
-							<p class="text-blue-500">
-								{{ auth.status.user?.name }}
-							</p>
+							<span class="text-sm font-light">posted on {{ data?.post?.['created_at'] }}</span>
 						</div>
 						<div>
-							<div class="flex justify-between">
-								<h2 class="text-lg font-semibold">
-									{{ post?.data?.post?.["title"] }}
+							<div class="flex justify-between w-full">
+								<h2 class="text-lg font-semibold w-3/4">
+									{{ data?.post?.["title"] }}
 								</h2>
 								<!-- feature work -->
 								<div class="space-x-1.5">
@@ -85,7 +88,7 @@
 					</div>
 					<div class="space-y-2">
 						<p class="text-gray-700">
-							{{ post?.data?.post?.["content"] }}
+							{{ data?.post?.["content"] }}
 						</p>
 					</div>
 				</div>
@@ -110,16 +113,13 @@ import {
 } from "ionicons/icons";
 import router from "@/router";
 import { useRoute } from "vue-router";
-import { usePostStore } from "@/stores/post";
 import { useAuthStore } from "@/stores/auth";
 import { useHeaders } from "@/composables/headers";
 import { useToast } from "@/composables/toast";
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import { inject } from "vue";
 
 const route = useRoute();
-
-const post = usePostStore();
 
 const auth = useAuthStore();
 
@@ -129,29 +129,47 @@ const axios: any = inject("axios");
 
 const isOpenPopover = ref(false);
 
+const data = reactive({
+	hasPosts: false,
+	post: null,
+});
+
 onIonViewWillEnter(async () => {
-	await post.getSinglePost(`user/posts/${route.params.post}`);
+	await getPost();
 });
 
 const goBack = () => {
 	router.back();
-
-	post.clearData();
 };
 
 const openPopover = () => {
 	isOpenPopover.value = true;
 };
 
+const getPost = async () => {
+	try {
+		const getRes = await axios.get(
+			`user/posts/${route.params.post}`,
+			useHeaders()
+		);
+
+		data.hasPosts = true;
+		data.post = getRes.data.post;
+	} catch (error: any) {
+		console.log(error);
+	}
+};
+
 const editPost = () => {
 	isOpenPopover.value = false;
-	router.push(`/account/posts/${post?.data?.post?.["id"]}/edit`);
+
+	router.push(`/account/posts/${data?.post?.["id"]}/edit`);
 };
 
 const deletePost = async () => {
 	try {
 		const deleteRes = await axios.delete(
-			`user/posts/${post?.data?.post?.["id"]}`,
+			`user/posts/${data?.post?.["id"]}`,
 			useHeaders()
 		);
 
@@ -159,8 +177,6 @@ const deletePost = async () => {
 			isOpenPopover.value = false;
 
 			router.back();
-
-			post.clearData();
 
 			setTimeout(function () {
 				toast.createToast(
