@@ -43,7 +43,7 @@
 						accept=".jpg,.png,.pdf"
 					/>
 					<div class="flex justify-between text-sm mb-10">
-						<button @click="router.back()">Cancel</button>
+						<button type="button" @click="router.back()">Cancel</button>
 						<button
 							class="text-white bg-blue-500 py-2 px-4 rounded-md flex"
 						>
