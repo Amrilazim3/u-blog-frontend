@@ -114,7 +114,7 @@ onIonViewWillEnter(async () => {
 const getPost = async () => {
 	try {
 		const getRes = await axios.get(
-			`user/posts/${route.params.post}`,
+			`account/posts/${route.params.post}`,
 			useHeaders()
 		);
 
@@ -147,7 +147,7 @@ const save = async (data: any, node: any) => {
 
 	try {
 		const patchRes = await axios.post(
-			`user/posts/${postId.value}`,
+			`account/posts/${postId.value}`,
 			form,
 			useHeaders()
 		);
