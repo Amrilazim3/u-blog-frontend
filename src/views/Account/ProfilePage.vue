@@ -1,6 +1,6 @@
 <template>
 	<ion-page>
-		<ion-content :fullscreen="true">
+		<ion-content :fullscreen="true" ref="contentSection">
 			<div class="p-4">
 				<h1 class="text-2xl font-semibold mb-6">My Profile</h1>
 				<div class="flex space-x-6">
@@ -51,12 +51,19 @@
 						edit profile
 					</button>
 				</div>
-				<template v-if="postStore.data.hasPosts">
+				<template v-if="data.hasPosts">
 					<div class="space-y-5 mt-10">
-						<template v-for="post in postStore.data.posts" :key="post.id">
+						<template
+							v-for="post in data.posts"
+							:key="post.id"
+						>
 							<div
 								class="space-y-3 bg-gray-100 hover:bg-gray-50 rounded-md p-2.5"
-								@click="router.push(`/app/account/posts/${post['id']}/show`)"
+								@click="
+									router.push(
+										`/app/account/posts/${post['id']}/show`
+									)
+								"
 							>
 								<div class="flex justify-center">
 									<img
@@ -80,7 +87,7 @@
 								</div>
 							</div>
 						</template>
-						<PaginationPage :links="postStore.data.links" />
+						<PaginationPage :links="data.links" @paginate-next="getNextPosts" />
 					</div>
 				</template>
 				<template v-else>
@@ -96,18 +103,57 @@
 <script lang="ts" setup>
 import { IonPage, IonContent, onIonViewWillEnter } from "@ionic/vue";
 import { useAuthStore } from "@/stores/auth";
-import { usePostStore } from "@/stores/post";
 import router from "@/router";
+import { inject, reactive, ref } from "vue";
+import { useHeaders } from "@/composables/headers";
 
 const auth = useAuthStore();
 
-const postStore = usePostStore();
+const axios: any = inject("axios");
+
+const contentSection: any = ref(null);
+
+const data = reactive({
+	hasPosts: false,
+	links: null,
+	posts: null,
+});
 
 onIonViewWillEnter(async () => {
-	getPosts();
+	await getPosts();
 });
 
 const getPosts = async () => {
-	await postStore.getPosts("/user/posts");
-}
+	try {
+		const getRes = await axios.get("user/posts", useHeaders());
+
+		if (getRes.status == 200) {
+			if (getRes.data.posts.data.length > 0) {
+				data.hasPosts = true;
+				data.posts = getRes.data.posts.data;
+				data.links = getRes.data.posts.links;
+			}
+		}
+	} catch (error: any) {
+		console.log(error);
+	}
+};
+
+const getNextPosts = async (link: string) => {
+	try {
+		const nextPostsRes = await axios.get(link, useHeaders());
+
+		if (nextPostsRes.status == 200) {
+			contentSection?.value?.$el?.scrollToPoint?.(0, 11, 1000);
+
+			if (nextPostsRes.data.posts.data.length > 0) {
+				data.hasPosts = true;
+				data.posts = nextPostsRes.data.posts.data;
+				data.links = nextPostsRes.data.posts.links;
+			}
+		}
+	} catch (error: any) {
+		console.log(error);
+	}
+};
 </script>
