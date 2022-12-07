@@ -28,11 +28,17 @@
 							<div class="flex space-x-3">
 								<div class="h-6 w-6">
 									<template
-										v-if="data?.post?.['user']['profile_image_url']"
+										v-if="
+											data?.post?.['user'][
+												'profile_image_url'
+											]
+										"
 									>
 										<img
 											:src="
-												data?.post?.['user']['profile_image_url']
+												data?.post?.['user'][
+													'profile_image_url'
+												]
 											"
 											alt="profile pic"
 											class="object-cover rounded-md"
@@ -46,8 +52,16 @@
 										/>
 									</template>
 								</div>
-								<p class="text-gray-900">
-									{{ data?.post?.['user']['name'] }} - <span class="text-blue-500">follow</span> 
+								<p
+									class="text-gray-900"
+									@click="
+										router.push(
+											`/app/users/${data?.post?.['user']['id']}/profile`
+										)
+									"
+								>
+									{{ data?.post?.["user"]["name"] }} -
+									<span class="text-blue-500">follow</span>
 								</p>
 							</div>
 							<span class="text-sm font-light"
