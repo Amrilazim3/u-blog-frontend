@@ -130,7 +130,6 @@ const axios: any = inject("axios");
 const isOpenPopover = ref(false);
 
 const data = reactive({
-	hasPosts: false,
 	post: null,
 });
 
@@ -149,11 +148,10 @@ const openPopover = () => {
 const getPost = async () => {
 	try {
 		const getRes = await axios.get(
-			`user/posts/${route.params.post}`,
+			`account/posts/${route.params.post}`,
 			useHeaders()
 		);
 
-		data.hasPosts = true;
 		data.post = getRes.data.post;
 	} catch (error: any) {
 		console.log(error);
@@ -169,7 +167,7 @@ const editPost = () => {
 const deletePost = async () => {
 	try {
 		const deleteRes = await axios.delete(
-			`user/posts/${data?.post?.["id"]}`,
+			`account/posts/${data?.post?.["id"]}`,
 			useHeaders()
 		);
 
