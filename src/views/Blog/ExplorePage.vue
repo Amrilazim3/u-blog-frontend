@@ -8,12 +8,12 @@
 						>U-Blog</ion-title
 					>
 					<div></div>
-					<div class="h-6 w-6 self-center">
+					<div class="self-center">
 						<template v-if="auth.status.user?.profileImage">
 							<img
-								src="https://xsgames.co/randomusers/assets/avatars/male/17.jpg"
+								:src="auth.status.user?.profileImage"
 								alt="profile pic"
-								class="object-cover rounded-md"
+								class="object-cover rounded-md h-6 w-6"
 								@click="openPopover"
 							/>
 						</template>
@@ -21,6 +21,7 @@
 							<img
 								src="https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg"
 								alt="profile icon"
+								class="object-cover rounded-md h-6 w-6"
 								@click="openPopover"
 							/>
 						</template>
@@ -33,8 +34,9 @@
 						<ion-content class="ion-padding">
 							<button
 								class="w-full text-left text-sm font-semibold rounded-md text-gray-800 hover:bg-blue-100 p-1.5"
+								@click="isOpenPopover = false; router.push('/app/account/profile')"
 							>
-								Profile settings
+								Profile
 							</button>
 							<button
 								class="w-full text-left text-sm font-semibold rounded-md text-red-500 hover:bg-blue-100 p-1.5"
