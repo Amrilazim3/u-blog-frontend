@@ -83,7 +83,7 @@
 										<p>
 											posted on {{ post["created_at"] }}
 										</p>
-										<p>15 likes</p>
+										<p>{{ post["likes_count"] }} likes</p>
 									</div>
 									<h2 class="text-lg font-semibold">
 										{{ post["title"] }}
