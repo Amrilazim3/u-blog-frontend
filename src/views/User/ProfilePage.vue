@@ -76,7 +76,7 @@
 										<p>
 											posted on {{ post["created_at"] }}
 										</p>
-										<p>15 likes</p>
+										<p>{{ post["likes_count"] }} likes</p>
 									</div>
 									<h2 class="text-lg font-semibold">
 										{{ post["title"] }}
@@ -103,13 +103,10 @@
 <script lang="ts" setup>
 import { IonPage, IonContent, IonIcon, onIonViewWillEnter } from "@ionic/vue";
 import { arrowBackOutline } from "ionicons/icons";
-import { useAuthStore } from "@/stores/auth";
 import router from "@/router";
 import { useRoute } from "vue-router";
 import { inject, reactive, ref } from "vue";
 import { useHeaders } from "@/composables/headers";
-
-const auth = useAuthStore();
 
 const route = useRoute();
 
