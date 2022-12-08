@@ -18,28 +18,28 @@
 						></ion-icon>
 						<h1 class="text-xl font-semibold">Edit Profile</h1>
 					</div>
-					<div class="flex space-x-4 mb-3 w-full">
-						<div class="w-16 h-16">
+					<div class="flex space-x-4 mb-3">
+						<div class="w-16 h-16 flex-none">
 							<img
 								:src="previewImageURL"
 								alt="profile image"
 								class="object-cover h-10 w-10 rounded-full"
 							/>
 						</div>
-                        <div class="w-full">
-                            <FormKit
-                                type="file"
-                                name="profile_image"
-                                :value="
-                                    auth?.status?.user?.profileImage
-                                        ? [{ name: 'profile-image' }]
-                                        : ''
-                                "
-                                @change="updateProfileImage($event)"
-                                accept=".jpg,.png,.pdf"
-                                @file-remove-icon-click="removePreviewImage"
-                            />
-                        </div>
+						<div class="shrink">
+							<FormKit
+								type="file"
+								name="profile_image"
+								:value="
+									auth?.status?.user?.profileImage
+										? [{ name: 'profile-image' }]
+										: ''
+								"
+								@change="updateProfileImage($event)"
+								accept=".jpg,.png,.pdf"
+								@file-remove-icon-click="removePreviewImage"
+							/>
+						</div>
 					</div>
 					<FormKit
 						type="text"
@@ -113,6 +113,8 @@ const previewImageURL = ref(
 	"https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg"
 );
 
+const isRemoveOldProfileImage = ref("false");
+
 const newProfileImage = ref("");
 
 const isLoading = ref(false);
@@ -129,6 +131,7 @@ const save = async (data: any, node: any) => {
 	form.append("name", data.name);
 	form.append("email", data.email);
 	form.append("bio", data.bio);
+	form.append("isRemoveOriginalProfileImage", isRemoveOldProfileImage.value);
 	form.append(
 		"originalProfileImage",
 		auth?.status?.user?.profileImage ? auth?.status?.user?.profileImage : ""
@@ -152,7 +155,13 @@ const save = async (data: any, node: any) => {
 			}
 
 			router.back();
-			toast.createToast("Profile updated", 2000, "top", "success", "text-gray-800");
+			toast.createToast(
+				"Profile updated",
+				2000,
+				"top",
+				"success",
+				"text-gray-800"
+			);
 		}
 	} catch (error: any) {
 		node.setErrors(
@@ -170,6 +179,10 @@ const updateProfileImage = (event: any) => {
 };
 
 const removePreviewImage = () => {
+	if (auth.status.user?.profileImage) {
+		isRemoveOldProfileImage.value = "true";
+	}
+
 	previewImageURL.value =
 		"https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg";
 };
