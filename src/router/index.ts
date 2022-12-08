@@ -72,6 +72,10 @@ const routes: Array<RouteRecordRaw> = [
 				component: () => import("@/views/Account/ProfilePage.vue"),
 			},
 			{
+				path: "account/profile/edit",
+				component: () => import("@/views/Account/EditPage.vue"),
+			},
+			{
 				path: "account/posts/:post/show",
 				component: () => import("@/views/Account/Post/ShowPage.vue"),
 			}
