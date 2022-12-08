@@ -7,7 +7,7 @@
 					<h1 class="text-2xl font-semibold">My Profile</h1>
 				</div>
 				<div class="flex space-x-6">
-					<div class="w-36">
+					<div class="w-20 flex-none">
 						<img
 							:src="
 								auth.status.user?.profileImage
@@ -15,7 +15,7 @@
 									: 'https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg'
 							"
 							alt="profile pic"
-							class="object-fill rounded-full w-full h-full"
+							class="object-cover rounded-full h-20 w-20"
 						/>
 					</div>
 					<div class="w-full">
@@ -49,7 +49,8 @@
 				</div>
 				<div class="mt-5">
 					<button
-						class="w-full rounded-md outline outline-gray-400 py-1"
+						class="w-full rounded-md outline text-white outline-none bg-blue-500 py-1"
+						@click="router.push('/app/account/profile/edit')"
 					>
 						edit profile
 					</button>
