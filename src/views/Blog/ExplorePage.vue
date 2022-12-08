@@ -109,7 +109,7 @@
 										"
 										>{{ post["user"]["name"] }}</small
 									>
-									<small>10 likes</small>
+									<small>{{ post['likes_count'] }} likes</small>
 								</div>
 							</div>
 						</template>
