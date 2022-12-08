@@ -14,15 +14,36 @@
 								src="https://xsgames.co/randomusers/assets/avatars/male/17.jpg"
 								alt="profile pic"
 								class="object-cover rounded-md"
+								@click="openPopover"
 							/>
 						</template>
 						<template v-else>
 							<img
 								src="https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg"
 								alt="profile icon"
+								@click="openPopover"
 							/>
 						</template>
 					</div>
+					<ion-popover
+						:is-open="isOpenPopover"
+						:event="event"
+						@didDismiss="isOpenPopover = false"
+					>
+						<ion-content class="ion-padding">
+							<button
+								class="w-full text-left text-sm font-semibold rounded-md text-gray-800 hover:bg-blue-100 p-1.5"
+							>
+								Profile settings
+							</button>
+							<button
+								class="w-full text-left text-sm font-semibold rounded-md text-red-500 hover:bg-blue-100 p-1.5"
+								@click="logout"
+							>
+								Logout
+							</button>
+						</ion-content>
+					</ion-popover>
 				</div>
 			</ion-toolbar>
 		</ion-header>
@@ -109,7 +130,9 @@
 										"
 										>{{ post["user"]["name"] }}</small
 									>
-									<small>{{ post['likes_count'] }} likes</small>
+									<small
+										>{{ post["likes_count"] }} likes</small
+									>
 								</div>
 							</div>
 						</template>
@@ -145,6 +168,7 @@ import {
 	IonFab,
 	IonFabButton,
 	IonIcon,
+	IonPopover,
 	onIonViewWillEnter,
 } from "@ionic/vue";
 import { add } from "ionicons/icons";
@@ -164,6 +188,10 @@ const data = reactive({
 });
 
 const contentSection: any = ref(null);
+
+const event = ref();
+
+const isOpenPopover = ref(false);
 
 onIonViewWillEnter(async () => {
 	await getPosts();
@@ -223,5 +251,20 @@ const visitProfilePage = (userId: number) => {
 
 const createPost = () => {
 	router.push("/account/posts/create");
+};
+
+const openPopover = (e: Event) => {
+	event.value = e;
+	isOpenPopover.value = true;
+};
+
+const logout = async () => {
+	const logoutRes = await auth.logout();
+
+	if (logoutRes == 200) {
+		isOpenPopover.value = false;
+
+		router.push("/login");
+	}
 };
 </script>
