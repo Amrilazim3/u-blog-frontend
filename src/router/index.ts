@@ -9,21 +9,31 @@ import RegisterPage from "@/views/Auth/RegisterPage.vue";
 import LoginPage from "@/views/Auth/LoginPage.vue";
 import MainPage from "@/views/MainPage.vue";
 import auth from "@/middleware/auth";
+import guest from "@/middleware/guest";
 
 const routes: Array<RouteRecordRaw> = [
 	{
 		path: "/",
 		redirect: "/home",
+		meta: {
+			middleware: guest,
+		},
 	},
 	{
 		path: "/home",
 		name: "Home",
 		component: HomePage,
+		meta: {
+			middleware: guest,
+		},
 	},
 	{
 		path: "/register",
 		name: "Register",
 		component: RegisterPage,
+		meta: {
+			middleware: guest,
+		},
 	},
 	{
 		path: "/login",
