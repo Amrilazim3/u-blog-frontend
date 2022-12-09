@@ -207,9 +207,27 @@
 				</ion-popover>
 
 				<div class="flex justify-between mt-10 px-4">
-					<button class="hover:font-bold">Featured</button>
-					<button class="hover:font-bold">Latest</button>
-					<button class="hover:font-bold">Trending</button>
+					<button
+						class="hover:font-bold"
+						:class="isActiveFeatured ? 'font-bold' : ''"
+						@click="featuredPosts"
+					>
+						Featured
+					</button>
+					<button
+						class="hover:font-bold"
+						:class="isActiveLatest ? 'font-bold' : ''"
+						@click="latestPosts"
+					>
+						Latest
+					</button>
+					<button
+						class="hover:font-bold"
+						:class="isActiveTrending ? 'font-bold' : ''"
+						@click="trendingPosts"
+					>
+						Trending
+					</button>
 				</div>
 
 				<!-- blog posts list -->
@@ -309,6 +327,10 @@ const data = reactive({
 	posts: null,
 });
 
+const isActiveFeatured = ref(false);
+const isActiveLatest = ref(false);
+const isActiveTrending = ref(false);
+
 type SearchData = {
 	posts: any;
 	users: any;
@@ -336,6 +358,70 @@ const getPosts = async () => {
 		const getRes = await axios.get("/posts", useHeaders());
 
 		if (getRes.status == 200) {
+			isActiveFeatured.value = false;
+			isActiveLatest.value = false;
+			isActiveTrending.value = false;
+
+			if (getRes.data.posts.data.length > 0) {
+				data.hasPosts = true;
+				data.posts = getRes.data.posts.data;
+				data.links = getRes.data.posts.links;
+			}
+		}
+	} catch (error: any) {
+		console.log(error);
+	}
+};
+
+const featuredPosts = async () => {
+	try {
+		const getRes = await axios.get("/posts/featured", useHeaders());
+
+		if (getRes.status == 200) {
+			isActiveFeatured.value = true;
+			isActiveLatest.value = false;
+			isActiveTrending.value = false;
+
+			if (getRes.data.posts.data.length > 0) {
+				data.hasPosts = true;
+				data.posts = getRes.data.posts.data;
+				data.links = getRes.data.posts.links;
+			}
+		}
+	} catch (error: any) {
+		console.log(error);
+	}
+};
+
+const latestPosts = async () => {
+	try {
+		const getRes = await axios.get("/posts/latest", useHeaders());
+
+		if (getRes.status == 200) {
+			isActiveFeatured.value = false;
+			isActiveLatest.value = true;
+			isActiveTrending.value = false;
+
+			if (getRes.data.posts.data.length > 0) {
+				data.hasPosts = true;
+				data.posts = getRes.data.posts.data;
+				data.links = getRes.data.posts.links;
+			}
+		}
+	} catch (error: any) {
+		console.log(error);
+	}
+};
+
+const trendingPosts = async () => {
+	try {
+		const getRes = await axios.get("/posts/trending", useHeaders());
+
+		if (getRes.status == 200) {
+			isActiveFeatured.value = false;
+			isActiveLatest.value = false;
+			isActiveTrending.value = true;
+
 			if (getRes.data.posts.data.length > 0) {
 				data.hasPosts = true;
 				data.posts = getRes.data.posts.data;
