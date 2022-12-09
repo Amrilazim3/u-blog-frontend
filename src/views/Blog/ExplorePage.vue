@@ -34,7 +34,10 @@
 						<ion-content class="ion-padding">
 							<button
 								class="w-full text-left text-sm font-semibold rounded-md text-gray-800 hover:bg-blue-100 p-1.5"
-								@click="isOpenPopover = false; router.push('/app/account/profile')"
+								@click="
+									isOpenPopover = false;
+									router.push('/app/account/profile');
+								"
 							>
 								Profile
 							</button>
@@ -51,41 +54,157 @@
 		</ion-header>
 		<ion-content :fullscreen="true" ref="contentSection">
 			<div class="p-6">
-				<form @submit.prevent="">
-					<div
-						class="relative text-gray-600 focus-within:text-gray-400"
+				<div class="relative text-gray-600 focus-within:text-gray-400">
+					<span
+						class="absolute inset-y-0 left-0 flex items-center pl-2"
 					>
-						<span
-							class="absolute inset-y-0 left-0 flex items-center pl-2"
+						<button
+							type="submit"
+							class="p-1 focus:outline-none focus:shadow-outline"
 						>
-							<button
-								type="submit"
-								class="p-1 focus:outline-none focus:shadow-outline"
+							<svg
+								fill="none"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								viewBox="0 0 24 24"
+								class="w-6 h-6"
 							>
-								<svg
-									fill="none"
-									stroke="currentColor"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									viewBox="0 0 24 24"
-									class="w-6 h-6"
+								<path
+									d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+								></path>
+							</svg>
+						</button>
+					</span>
+					<input
+						type="search"
+						name="search"
+						class="py-2 text-sm min-w-full text-gray-900 bg-gray-100 rounded-full pl-10 focus:outline-none z-10"
+						placeholder="Search..."
+						autocomplete="off"
+						@keyup="search($event)"
+						@focus="search($event)"
+						@click="OpenSearchPopover"
+					/>
+				</div>
+				<ion-popover
+					:is-open="isOpenSearchPopover"
+					:event="event"
+					@didDismiss="isOpenSearchPopover = false"
+					size="cover"
+				>
+					<ion-content class="ion-padding">
+						<div
+							class="relative text-gray-600 focus-within:text-gray-400"
+						>
+							<span
+								class="absolute inset-y-0 left-0 flex items-center pl-2"
+							>
+								<button
+									type="submit"
+									class="p-1 focus:outline-none focus:shadow-outline"
 								>
-									<path
-										d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-									></path>
-								</svg>
-							</button>
-						</span>
-						<input
-							type="search"
-							name="search"
-							class="py-2 text-sm min-w-full text-gray-900 bg-gray-100 rounded-full pl-10 focus:outline-none"
-							placeholder="Search..."
-							autocomplete="off"
-						/>
-					</div>
-				</form>
+									<svg
+										fill="none"
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										viewBox="0 0 24 24"
+										class="w-6 h-6"
+									>
+										<path
+											d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+										></path>
+									</svg>
+								</button>
+							</span>
+							<input
+								type="search"
+								name="search"
+								class="py-2 text-sm min-w-full text-gray-900 bg-gray-100 rounded-full pl-10 focus:outline-none z-10"
+								placeholder="Search..."
+								autocomplete="off"
+								@keyup="search($event)"
+								@focus="search($event)"
+								@click="OpenSearchPopover"
+							/>
+						</div>
+						<div class="mt-3 space-y-3 divide-y-2 divide-gray-500">
+							<div class="space-y-1 divide-y divide-gray-300">
+								<h3 class="text-sm font-semibold">Users</h3>
+								<template
+									v-if="
+										searchData.users !== null &&
+										searchData?.users?.length !== 0
+									"
+								>
+									<template
+										v-for="user in searchData.users"
+										:key="user.id"
+									>
+										<div
+											class="pt-2 text-sm flex space-x-3"
+											@click="
+												visitProfilePage(user['id']);
+												isOpenSearchPopover = false;
+											"
+										>
+											<img
+												:src="
+													user['profile_image_url']
+														? user['profile_image_url']
+														: 'https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg'
+												"
+												alt="profile image"
+												class="w-8 h-8 object-cover"
+											/>
+											<p class="self-center">
+												{{ user["name"] }}
+											</p>
+										</div>
+									</template>
+								</template>
+								<template v-else>
+									<h3 class="pt-2 text-sm">No results</h3>
+								</template>
+							</div>
+							<div class="space-y-1 divide-y divide-gray-300">
+								<h3 class="mt-2 text-sm font-semibold">
+									Posts
+								</h3>
+								<template
+									v-if="
+										searchData.posts !== null &&
+										searchData?.posts?.length !== 0
+									"
+								>
+									<template
+										v-for="post in searchData.posts"
+										:key="post.id"
+									>
+										<div
+											class="pt-2 text-sm flex"
+											@click="
+												showSinglePost(
+													post['id'],
+													post['user_id']
+												);
+												isOpenSearchPopover = false;
+											"
+										>
+											<p>{{ post["title"] }}</p>
+										</div>
+									</template>
+								</template>
+								<template v-else>
+									<h3 class="pt-2 text-sm">No results</h3>
+								</template>
+							</div>
+						</div>
+					</ion-content>
+				</ion-popover>
 
 				<div class="flex justify-between mt-10 px-4">
 					<button class="hover:font-bold">Featured</button>
@@ -178,6 +297,7 @@ import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { reactive, ref, inject } from "vue";
 import { useHeaders } from "@/composables/headers";
+import { debounce } from "vue-debounce";
 
 const auth = useAuthStore();
 
@@ -189,11 +309,23 @@ const data = reactive({
 	posts: null,
 });
 
+type SearchData = {
+	posts: any;
+	users: any;
+};
+
+const searchData: SearchData = reactive({
+	posts: null,
+	users: null,
+});
+
 const contentSection: any = ref(null);
 
 const event = ref();
 
 const isOpenPopover = ref(false);
+
+const isOpenSearchPopover = ref(false);
 
 onIonViewWillEnter(async () => {
 	await getPosts();
@@ -255,9 +387,26 @@ const createPost = () => {
 	router.push("/account/posts/create");
 };
 
+const search = debounce(async (event: any) => {
+	const searchRes = await axios.get(
+		`/explore/search?search=${event.target.value}`,
+		useHeaders()
+	);
+
+	if (searchRes.status == 200) {
+		searchData.posts = searchRes.data.posts.data;
+		searchData.users = searchRes.data.users.data;
+	}
+}, 500);
+
 const openPopover = (e: Event) => {
 	event.value = e;
 	isOpenPopover.value = true;
+};
+
+const OpenSearchPopover = (e: Event) => {
+	event.value = e;
+	isOpenSearchPopover.value = true;
 };
 
 const logout = async () => {
