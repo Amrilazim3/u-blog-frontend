@@ -8,6 +8,7 @@ import axios from "axios";
 import VueAxios from "vue-axios";
 import { plugin, defaultConfig } from "@formkit/vue";
 import PaginationPage from "@/Components/PaginationPage.vue";
+import { vue3Debounce } from "vue-debounce";
 /* formkit themes */
 import "@formkit/themes/genesis";
 /* Core CSS required for Ionic components to work properly */
@@ -37,9 +38,10 @@ const app = createApp(App);
 app.use(IonicVue);
 app.use(router);
 app.use(VueAxios, axiosInstance);
-app.provide('axios', app.config.globalProperties.axios);
+app.provide("axios", app.config.globalProperties.axios);
 app.use(pinia);
 app.use(plugin, defaultConfig);
+app.directive('debounce', vue3Debounce({ lock: true }))
 app.component("PaginationPage", PaginationPage);
 
 router.isReady().then(() => {
