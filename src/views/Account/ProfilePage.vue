@@ -21,15 +21,15 @@
 					<div class="w-full">
 						<li class="flex space-x-4">
 							<ul class="flex flex-col text-center font-semibold">
-								100
+								{{ data.followers }}
 								<span class="font-normal">follwers</span>
 							</ul>
 							<ul class="flex flex-col text-center font-semibold">
-								100
+								{{ data.following }}
 								<span class="font-normal">following</span>
 							</ul>
 							<ul class="flex flex-col text-center font-semibold">
-								100
+								{{ data.postsCount }}
 								<span class="font-normal">posts</span>
 							</ul>
 						</li>
@@ -122,6 +122,9 @@ const data = reactive({
 	hasPosts: false,
 	links: null,
 	posts: null,
+	followers: 0,
+	following: 0,
+	postsCount: 0
 });
 
 onIonViewWillEnter(async () => {
@@ -133,6 +136,10 @@ const getPosts = async () => {
 		const getRes = await axios.get("account/posts", useHeaders());
 
 		if (getRes.status == 200) {
+			data.followers = getRes.data.followers;
+			data.following = getRes.data.following;
+			data.postsCount = getRes.data.postsCount;
+
 			if (getRes.data.posts.data.length > 0) {
 				data.hasPosts = true;
 				data.posts = getRes.data.posts.data;
