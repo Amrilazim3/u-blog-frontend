@@ -2,7 +2,11 @@
 	<ion-page>
 		<ion-content :fullscreen="true" ref="contentSection">
 			<div class="px-4 pb-4 mt-4">
-				<ion-icon :icon="arrowBackOutline" class="w-5 h-5 mb-1" @click="router.back()"></ion-icon>
+				<ion-icon
+					:icon="arrowBackOutline"
+					class="w-5 h-5 mb-1"
+					@click="router.back()"
+				></ion-icon>
 				<div class="flex space-x-6">
 					<div class="w-36">
 						<img
@@ -18,15 +22,15 @@
 					<div class="w-full">
 						<li class="flex space-x-4">
 							<ul class="flex flex-col text-center font-semibold">
-								100
+								{{ data.followers }}
 								<span class="font-normal">follwers</span>
 							</ul>
 							<ul class="flex flex-col text-center font-semibold">
-								100
+								{{ data.following }}
 								<span class="font-normal">following</span>
 							</ul>
 							<ul class="flex flex-col text-center font-semibold">
-								100
+								{{ data.postsCount }}
 								<span class="font-normal">posts</span>
 							</ul>
 						</li>
@@ -34,22 +38,41 @@
 				</div>
 				<div class="mt-4">
 					<h2 class="text-lg font-semibold">
-						{{ data?.user?.['name'] }}
+						{{ data?.user?.["name"] }}
 					</h2>
 					<p class="text-sm">
 						{{
-							data?.user?.['bio']
-								? data?.user?.['bio']
+							data?.user?.["bio"]
+								? data?.user?.["bio"]
 								: "No bio yet"
 						}}
 					</p>
 				</div>
 				<div class="mt-5">
-					<button
-						class="w-full bg-blue-500 text-white rounded-md outline-none py-1"
-					>
-						follow
-					</button>
+					<template v-if="data.isFollow">
+						<div class="flex space-x-2">
+							<button
+								class="w-full bg-blue-500 text-white rounded-md outline-none py-1"
+								@click="router.push('/app/explore')"
+							>
+								message
+							</button>
+							<button
+								class="w-full bg-red-500 text-white rounded-md outline-none py-1"
+								@click="unfollow"
+							>
+								unfollow
+							</button>
+						</div>
+					</template>
+					<template v-else>
+						<button
+							class="w-full bg-blue-500 text-white rounded-md outline-none py-1"
+							@click="follow"
+						>
+							follow
+						</button>
+					</template>
 				</div>
 				<template v-if="data.hasPosts">
 					<div class="space-y-5 mt-10">
@@ -119,6 +142,10 @@ const data = reactive({
 	links: null,
 	posts: null,
 	user: null,
+	followers: 0,
+	following: 0,
+	postsCount: 0,
+	isFollow: false
 });
 
 onIonViewWillEnter(async () => {
@@ -134,6 +161,11 @@ const getPosts = async () => {
 
 		if (getRes.status == 200) {
 			data.user = getRes.data.user;
+			data.followers = getRes.data.followers;
+			data.following = getRes.data.following;
+			data.postsCount = getRes.data.postsCount;
+			data.isFollow = getRes.data.isFollow;
+
 			if (getRes.data.posts.data.length > 0) {
 				data.hasPosts = true;
 				data.posts = getRes.data.posts.data;
@@ -160,6 +192,31 @@ const getNextPosts = async (link: string) => {
 		}
 	} catch (error: any) {
 		console.log(error);
+	}
+};
+
+const follow = async () => {
+	const followRes = await axios.post(
+		`/users/${route.params.user}/follow`,
+		null,
+		useHeaders()
+	);
+
+	if (followRes.data.success) {
+		data.followers += 1;
+		data.isFollow = true;
+	}
+};
+
+const unfollow = async () => {
+	const unfollowRes = await axios.delete(
+		`/users/${route.params.user}/follow`,
+		useHeaders()
+	);
+
+	if (unfollowRes.data.success) {
+		data.followers -= 1;
+		data.isFollow = false;
 	}
 };
 </script>
