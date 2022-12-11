@@ -52,17 +52,33 @@
 										/>
 									</template>
 								</div>
-								<p
-									class="text-gray-900"
-									@click="
-										router.push(
-											`/app/users/${data?.post?.['user']['id']}/profile`
-										)
-									"
-								>
-									{{ data?.post?.["user"]["name"] }} -
-									<span class="text-blue-500">follow</span>
-								</p>
+								<div class="flex space-x-1">
+									<p
+										class="text-gray-900"
+										@click="
+											router.push(
+												`/app/users/${data?.post?.['user']['id']}/profile`
+											)
+										"
+									>
+										{{ data?.post?.["user"]["name"] }}
+									</p>
+									<p>-</p>
+									<template v-if="isFollow">
+										<span
+											class="text-red-500"
+											@click="unfollow"
+											>unfollow</span
+										>
+									</template>
+									<template v-else>
+										<span
+											class="text-blue-500"
+											@click="follow"
+											>follow</span
+										>
+									</template>
+								</div>
 							</div>
 							<span class="text-sm font-light"
 								>posted on
@@ -164,7 +180,11 @@
 																	"
 																	class="w-4 h-4"
 																	@click="
-																		deleteComment(comment['id'])
+																		deleteComment(
+																			comment[
+																				'id'
+																			]
+																		)
 																	"
 																></ion-icon>
 															</template>
@@ -194,8 +214,18 @@
 							<div
 								class="flex space-x-2 text-gray-800 font-light text-sm"
 							>
-								<span>{{ data?.post?.['likes_count'] }} likes</span>
-								<span @click="openCommentModal">{{ data?.post?.['comments_count'] }} comments</span>
+								<span
+									>{{
+										data?.post?.["likes_count"]
+									}}
+									likes</span
+								>
+								<span @click="openCommentModal"
+									>{{
+										data?.post?.["comments_count"]
+									}}
+									comments</span
+								>
 							</div>
 						</div>
 					</div>
@@ -245,6 +275,8 @@ const auth = useAuthStore();
 
 const isLiked = ref(false);
 
+const isFollow = ref(false);
+
 const isOpenCommentModal = ref(false);
 
 const commentMsg = ref("");
@@ -267,6 +299,7 @@ const getPost = async () => {
 			useHeaders()
 		);
 
+		isFollow.value = getRes.data.isFollow;
 		data.post = getRes.data.post;
 	} catch (error: any) {
 		console.log(error);
@@ -368,6 +401,29 @@ const getComments = async () => {
 		data.comments = getCommentsRes.data.comments;
 	} catch (error: any) {
 		console.log(error);
+	}
+};
+
+const follow = async () => {
+	const followRes = await axios.post(
+		`/users/${route.params.user}/follow`,
+		null,
+		useHeaders()
+	);
+
+	if (followRes.data.success) {
+		isFollow.value = true;
+	}
+};
+
+const unfollow = async () => {
+	const unfollowRes = await axios.delete(
+		`/users/${route.params.user}/follow`,
+		useHeaders()
+	);
+
+	if (unfollowRes.data.success) {
+		isFollow.value = false;
 	}
 };
 </script>
