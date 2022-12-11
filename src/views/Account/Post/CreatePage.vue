@@ -90,7 +90,7 @@ const save = async (data: any, node: any) => {
 	});
 
 	try {
-		const response = await axios.post("/user/posts", form, useHeaders());
+		const response = await axios.post("account/posts", form, useHeaders());
 
 		if (response.data.success) {
 			isLoading.value = false;
