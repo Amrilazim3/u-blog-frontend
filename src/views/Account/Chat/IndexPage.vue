@@ -34,30 +34,54 @@
 						class="py-2 text-sm min-w-full text-gray-900 bg-gray-100 rounded-full pl-10 focus:outline-none"
 						placeholder="Search existing person to chat"
 						autocomplete="off"
+						v-model="searchUser"
+						@keydown="search"
+						@focus="search"
 					/>
 				</div>
 				<div class="space-y-3 mt-4 w-full divide-y divide-gray-300">
-					<template
-						v-for="(user , index) in data.users"
-						:key="user?.id"
-					>
-						<div class="flex space-x-4 pt-2" @click="router.push(`/account/chats/${user.engaged_id}`)">
-							<img
-								:src="
-									user?.following?.profile_image_url
-										? user?.following?.profile_image_url
-										: 'https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg'
+					<template v-if="data?.users?.length == 0">
+						<template v-if="searchUser !== ''">
+							<h3>No results</h3>
+						</template>
+						<template v-else>
+							<h3>Follow someone to start chatting!</h3>
+						</template>
+					</template>
+					<template v-else>
+						<template
+							v-for="(user, index) in data.users"
+							:key="user?.id"
+						>
+							<div
+								class="flex space-x-4 pt-2"
+								@click="
+									router.push(
+										`/account/chats/${user.engaged_id}`
+									)
 								"
-								alt="profile image"
-								class="h-10 w-10 object-cover rounded-full"
-							/>
-							<div>
-								<h3>{{ user?.following?.name }}</h3>
-								<p class="text-sm text-gray-500">
-									{{ data.chats[index]?.message == null ? 'Tap here to start chat' : data.chats[index]?.message }} 
-								</p>
+							>
+								<img
+									:src="
+										user?.following?.profile_image_url
+											? user?.following?.profile_image_url
+											: 'https://xsgames.co/randomusers/assets/avatars/pixel/1.jpg'
+									"
+									alt="profile image"
+									class="h-10 w-10 object-cover rounded-full"
+								/>
+								<div>
+									<h3>{{ user?.following?.name }}</h3>
+									<p class="text-sm text-gray-500">
+										{{
+											data.chats[index]?.message == null
+												? "Tap here to start chat"
+												: data.chats[index]?.message
+										}}
+									</p>
+								</div>
 							</div>
-						</div>
+						</template>
 					</template>
 				</div>
 			</div>
@@ -66,14 +90,11 @@
 </template>
 
 <script lang="ts" setup>
-import {
-	IonPage,
-	IonContent,
-	onIonViewWillEnter,
-} from "@ionic/vue";
+import { IonPage, IonContent, onIonViewWillEnter } from "@ionic/vue";
 import router from "@/router";
-import { inject, reactive } from "vue";
+import { inject, reactive, ref } from "vue";
 import { useHeaders } from "@/composables/headers";
+import { debounce } from "vue-debounce";
 
 interface Data {
 	users: any;
@@ -84,6 +105,8 @@ const data: Data = reactive({
 	users: null,
 	chats: null,
 });
+
+const searchUser = ref("");
 
 const axios: any = inject("axios");
 
@@ -97,4 +120,19 @@ const getChats = async () => {
 	data.users = getChatsRes.data.users;
 	data.chats = getChatsRes.data.chats;
 };
+
+const search = debounce(async () => {
+	if (searchUser.value !== "") {
+		const searchRes = await axios.get(
+			`account/chats/search?search=${searchUser.value}`,
+			useHeaders()
+		);
+
+		data.users = searchRes.data.users;
+		data.chats = searchRes.data.chats;
+		return;
+	}
+
+	getChats();
+}, 400);
 </script>
