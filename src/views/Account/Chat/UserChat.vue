@@ -26,7 +26,12 @@
 							<div
 								class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end"
 							>
-								<div>
+								<div class="flex">
+									<ion-icon
+										:icon="trashOutline"
+										class="h-4 w-4 self-center mr-2.5"
+										@click="deleteChat(chat.id)"
+									></ion-icon>
 									<span
 										class="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white"
 										>{{ chat.message }}</span
@@ -88,7 +93,7 @@ import {
 	IonIcon,
 	onIonViewWillEnter,
 } from "@ionic/vue";
-import { chevronBack } from "ionicons/icons";
+import { chevronBack, trashOutline } from "ionicons/icons";
 import router from "@/router";
 import { useRoute } from "vue-router";
 import { reactive, ref } from "vue";
@@ -137,16 +142,27 @@ const submit = async () => {
 		useHeaders()
 	);
 
-    if (submitRes.data.success) {
-        const chatObj = {
-            id: submitRes.data.chat.id,
-            message: submitRes.data.chat.message,
-            user_id_to: submitRes.data.chat.user_id_to,
-        }
+	if (submitRes.data.success) {
+		const chatObj = {
+			id: submitRes.data.chat.id,
+			message: submitRes.data.chat.message,
+			user_id_to: submitRes.data.chat.user_id_to,
+		};
 
-        data.chats.push(chatObj);
+		data.chats.push(chatObj);
 
-        message.value = "";
+		message.value = "";
+	}
+};
+
+const deleteChat = async (chatId: any) => {
+	const deleteChatRes = await axios.delete(
+		`/account/chats/${chatId}`,
+		useHeaders()
+	);
+
+    if (deleteChatRes.data.success) {
+        data.chats.splice(1, chatId);
     }
 };
 </script>
