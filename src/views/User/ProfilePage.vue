@@ -53,7 +53,7 @@
 						<div class="flex space-x-2">
 							<button
 								class="w-full bg-blue-500 text-white rounded-md outline-none py-1"
-								@click="router.push('/app/explore')"
+								@click="router.push(`/account/chats/${data?.user?.['id']}`)"
 							>
 								message
 							</button>
