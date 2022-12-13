@@ -82,6 +82,11 @@ const routes: Array<RouteRecordRaw> = [
 		],
 	},
 	{
+		path: "/app/account/chats/:user",
+		name: "User Chat",
+		component: () => import("@/views/Account/Chat/UserChat.vue"),
+	},
+	{
 		path: "/account/posts/create",
 		name: "Create Post",
 		component: () => import("@/views/Account/Post/CreatePage.vue"),
