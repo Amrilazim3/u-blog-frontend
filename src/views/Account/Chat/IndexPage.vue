@@ -41,7 +41,7 @@
 						v-for="(user , index) in data.users"
 						:key="user?.id"
 					>
-						<div class="flex space-x-4 pt-2" @click="router.push(`/app/account/chats/${user.engaged_id}`)">
+						<div class="flex space-x-4 pt-2" @click="router.push(`/account/chats/${user.engaged_id}`)">
 							<img
 								:src="
 									user?.following?.profile_image_url
